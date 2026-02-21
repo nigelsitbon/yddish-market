@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { prisma } from "@/lib/prisma";
 import { ProductCard, type ProductCardData } from "@/components/storefront/product-card";
 
@@ -36,6 +37,19 @@ async function getCategories() {
   });
 }
 
+/* ── Images Unsplash (placeholders premium — à remplacer par les vraies photos) ── */
+
+const IMAGES = {
+  hero: "https://images.unsplash.com/photo-1611944212129-29977ae1398c?w=1200&q=80&fit=crop",
+  bijoux: "https://images.unsplash.com/photo-1515562141589-67f0d569b6f5?w=800&q=80&fit=crop",
+  artAccessoires: "https://images.unsplash.com/photo-1545378889-08b7944e1639?w=800&q=80&fit=crop",
+  fetes: "https://images.unsplash.com/photo-1482575832494-771f74bf6857?w=800&q=80&fit=crop",
+  artisan: "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=1200&q=80&fit=crop",
+  vetements: "https://images.unsplash.com/photo-1558171813-4c088753af8f?w=600&q=80&fit=crop",
+  livres: "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=600&q=80&fit=crop",
+  epicerieFine: "https://images.unsplash.com/photo-1474722883778-792e7990302f?w=600&q=80&fit=crop",
+};
+
 /* ── Page ── */
 
 export default async function HomePage() {
@@ -50,16 +64,16 @@ export default async function HomePage() {
 
   // Pick 3 categories for editorial banners
   const editorialCategories = [
-    { name: "Bijoux", slug: "bijoux", subtitle: "Bracelets, colliers, bagues" },
-    { name: "Art & Accessoires", slug: "art-accessoires", subtitle: "Hanoukia, mézouza, bougeoir" },
-    { name: "Fêtes", slug: "fetes", subtitle: "Chabbat, Hanouka, Pessah" },
+    { name: "Bijoux", slug: "bijoux", subtitle: "Bracelets, colliers, bagues", image: IMAGES.bijoux },
+    { name: "Art & Accessoires", slug: "art-accessoires", subtitle: "Hanoukia, mézouza, bougeoir", image: IMAGES.artAccessoires },
+    { name: "Fêtes", slug: "fetes", subtitle: "Chabbat, Hanouka, Pessah", image: IMAGES.fetes },
   ];
 
   // Bottom category row
   const bottomCategories = [
-    { name: "Vêtements", slug: "vetements" },
-    { name: "Livres", slug: "livres" },
-    { name: "Épicerie Fine", slug: "epicerie-fine" },
+    { name: "Vêtements", slug: "vetements", image: IMAGES.vetements },
+    { name: "Livres", slug: "livres", image: IMAGES.livres },
+    { name: "Épicerie Fine", slug: "epicerie-fine", image: IMAGES.epicerieFine },
   ];
 
   const hasProducts = products.length > 0;
@@ -69,12 +83,15 @@ export default async function HomePage() {
       {/* ── Hero: Editorial split layout ── */}
       <section className="grid grid-cols-1 lg:grid-cols-2">
         {/* Left: Image */}
-        <div className="relative aspect-[4/5] lg:aspect-auto bg-[#E8E4DE]">
-          <div className="absolute inset-0 flex items-center justify-center">
-            <span className="text-xs text-[#A09A90] tracking-[0.3em] uppercase">
-              Collection image
-            </span>
-          </div>
+        <div className="relative aspect-[4/5] lg:aspect-auto lg:min-h-[600px] bg-[#1A1A2E]">
+          <Image
+            src={IMAGES.hero}
+            alt="Collection Judaica — objets rituels artisanaux"
+            fill
+            className="object-cover"
+            priority
+            sizes="(max-width: 1024px) 100vw, 50vw"
+          />
         </div>
         {/* Right: Content */}
         <div className="flex flex-col items-center justify-center px-8 py-16 lg:py-0 lg:px-16 bg-[#FAF9F7]">
@@ -129,15 +146,23 @@ export default async function HomePage() {
           <Link
             key={cat.slug}
             href={`/products?category=${cat.slug}`}
-            className={`group relative aspect-[4/3] bg-[#F0EFEB] flex items-center justify-center ${
+            className={`group relative aspect-[4/3] overflow-hidden flex items-center justify-center ${
               i < 2 ? "md:border-r border-border" : ""
             }`}
           >
+            <Image
+              src={cat.image}
+              alt={cat.name}
+              fill
+              className="object-cover transition-transform duration-700 group-hover:scale-105"
+              sizes="(max-width: 768px) 100vw, 33vw"
+            />
+            <div className="absolute inset-0 bg-black/30" />
             <div className="text-center z-10">
-              <p className="text-[11px] tracking-[0.3em] text-muted-foreground uppercase mb-2">
+              <p className="text-[11px] tracking-[0.3em] text-white/80 uppercase mb-2">
                 {cat.subtitle}
               </p>
-              <p className="text-[18px] font-light text-foreground group-hover:underline">
+              <p className="text-[18px] font-light text-white group-hover:underline underline-offset-4">
                 {cat.name}
               </p>
             </div>
@@ -185,12 +210,14 @@ export default async function HomePage() {
 
       {/* ── Editorial: Full-width split ── */}
       <section className="grid grid-cols-1 lg:grid-cols-2 border-t border-border">
-        <div className="relative aspect-[4/3] lg:aspect-auto bg-[#E2DFD8]">
-          <div className="absolute inset-0 flex items-center justify-center">
-            <span className="text-xs text-[#A09A90] tracking-[0.3em] uppercase">
-              Artisan image
-            </span>
-          </div>
+        <div className="relative aspect-[4/3] lg:aspect-auto lg:min-h-[500px] bg-[#1A1A2E]">
+          <Image
+            src={IMAGES.artisan}
+            alt="Artisan joaillier au travail"
+            fill
+            className="object-cover"
+            sizes="(max-width: 1024px) 100vw, 50vw"
+          />
         </div>
         <div className="flex flex-col items-center justify-center px-8 py-16 lg:py-0 lg:px-16">
           <div className="max-w-sm text-center">
@@ -220,10 +247,14 @@ export default async function HomePage() {
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
             {bottomCategories.map((cat) => (
               <Link key={cat.slug} href={`/products?category=${cat.slug}`} className="group">
-                <div className="aspect-square bg-[#F5F5F5] mb-3 flex items-center justify-center">
-                  <span className="text-[11px] text-muted-foreground tracking-widest uppercase">
-                    Photo
-                  </span>
+                <div className="relative aspect-square overflow-hidden mb-3">
+                  <Image
+                    src={cat.image}
+                    alt={cat.name}
+                    fill
+                    className="object-cover transition-transform duration-500 group-hover:scale-105"
+                    sizes="(max-width: 640px) 50vw, 25vw"
+                  />
                 </div>
                 <p className="text-[13px] text-foreground group-hover:underline text-center">
                   {cat.name}
