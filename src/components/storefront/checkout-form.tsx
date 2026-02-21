@@ -1,12 +1,13 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useUser } from "@clerk/nextjs";
 import { ArrowLeft, Lock, ChevronDown } from "lucide-react";
-import { useCartStore } from "@/stores/cart";
+import { useCartStore, type CartItem as CartItemType } from "@/stores/cart";
 import { formatPrice } from "@/lib/utils";
+import { calculateSellerShipping, COUNTRY_OPTIONS } from "@/lib/shipping";
 
 type Address = {
   id: string;
@@ -87,9 +88,65 @@ export function CheckoutForm() {
     }
   }, [isLoaded, isSignedIn, router]);
 
-  const subtotal = useCartStore.getState().subtotal();
-  const shipping = subtotal >= 150 ? 0 : 9.90;
-  const total = subtotal + shipping;
+  // Determine destination country from selected address or new form
+  const destinationCountry = useMemo(() => {
+    if (showNewForm || !selectedAddressId) return form.country;
+    const addr = savedAddresses.find((a) => a.id === selectedAddressId);
+    return addr?.country ?? "FR";
+  }, [showNewForm, selectedAddressId, form.country, savedAddresses]);
+
+  // Group items by seller and calculate per-seller shipping
+  const { sellerGroups, subtotal, shippingTotal, total } = useMemo(() => {
+    const groups = new Map<string, {
+      sellerId: string;
+      shopName: string;
+      items: CartItemType[];
+      sellerSubtotal: number;
+      shipping: number;
+    }>();
+
+    for (const item of items) {
+      const sellerId = item.product.seller.id;
+      if (!groups.has(sellerId)) {
+        groups.set(sellerId, {
+          sellerId,
+          shopName: item.product.seller.shopName,
+          items: [],
+          sellerSubtotal: 0,
+          shipping: 0,
+        });
+      }
+      const group = groups.get(sellerId)!;
+      group.items.push(item);
+      const price = item.variant?.price ?? item.product.price;
+      group.sellerSubtotal += price * item.quantity;
+    }
+
+    let sub = 0;
+    let ship = 0;
+    for (const group of groups.values()) {
+      sub += group.sellerSubtotal;
+      group.shipping = calculateSellerShipping(
+        {
+          shippingDomestic: group.items[0].product.seller.shippingDomestic,
+          shippingEU: group.items[0].product.seller.shippingEU,
+          shippingInternational: group.items[0].product.seller.shippingInternational,
+          freeShippingThreshold: group.items[0].product.seller.freeShippingThreshold,
+          shipsFrom: group.items[0].product.seller.shipsFrom,
+        },
+        destinationCountry,
+        group.sellerSubtotal,
+      );
+      ship += group.shipping;
+    }
+
+    return {
+      sellerGroups: Array.from(groups.values()),
+      subtotal: sub,
+      shippingTotal: ship,
+      total: sub + ship,
+    };
+  }, [items, destinationCountry]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -371,11 +428,9 @@ export function CheckoutForm() {
                         onChange={(e) => setForm({ ...form, country: e.target.value })}
                         className="w-full h-11 px-3 pr-8 text-[13px] border border-border bg-white focus:border-foreground focus:outline-none transition-colors appearance-none"
                       >
-                        <option value="FR">France</option>
-                        <option value="BE">Belgique</option>
-                        <option value="CH">Suisse</option>
-                        <option value="IL">Israël</option>
-                        <option value="LU">Luxembourg</option>
+                        {COUNTRY_OPTIONS.map((c) => (
+                          <option key={c.value} value={c.value}>{c.label}</option>
+                        ))}
                       </select>
                       <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" />
                     </div>
@@ -438,47 +493,62 @@ export function CheckoutForm() {
                 Récapitulatif
               </h2>
 
-              {/* Items mini list */}
-              <div className="space-y-3 mb-6 max-h-[280px] overflow-y-auto">
-                {items.map((item) => {
-                  const price = item.variant?.price ?? item.product.price;
-                  return (
-                    <div key={item.id} className="flex items-start gap-3">
-                      <div className="w-12 h-16 bg-[#F0F0ED] shrink-0 flex items-center justify-center">
-                        {item.product.images[0] ? (
-                          <img
-                            src={item.product.images[0]}
-                            alt=""
-                            className="w-full h-full object-cover"
-                          />
-                        ) : (
-                          <span className="text-[7px] text-[#A09A90]">IMG</span>
-                        )}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-[12px] text-foreground truncate">{item.product.title}</p>
-                        {item.variant && (
-                          <p className="text-[11px] text-muted-foreground">{item.variant.name}</p>
-                        )}
-                        <p className="text-[11px] text-muted-foreground">Qté : {item.quantity}</p>
-                      </div>
-                      <p className="text-[12px] text-foreground shrink-0">
-                        {formatPrice(price * item.quantity)}
-                      </p>
+              {/* Items grouped by seller */}
+              <div className="space-y-5 mb-6 max-h-[360px] overflow-y-auto">
+                {sellerGroups.map((group) => (
+                  <div key={group.sellerId}>
+                    <p className="text-[11px] font-medium tracking-wide uppercase text-muted-foreground mb-2">
+                      {group.shopName}
+                    </p>
+                    <div className="space-y-2">
+                      {group.items.map((item) => {
+                        const price = item.variant?.price ?? item.product.price;
+                        return (
+                          <div key={item.id} className="flex items-start gap-3">
+                            <div className="w-12 h-16 bg-[#F0F0ED] shrink-0 flex items-center justify-center">
+                              {item.product.images[0] ? (
+                                <img
+                                  src={item.product.images[0]}
+                                  alt=""
+                                  className="w-full h-full object-cover"
+                                />
+                              ) : (
+                                <span className="text-[7px] text-[#A09A90]">IMG</span>
+                              )}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-[12px] text-foreground truncate">{item.product.title}</p>
+                              {item.variant && (
+                                <p className="text-[11px] text-muted-foreground">{item.variant.name}</p>
+                              )}
+                              <p className="text-[11px] text-muted-foreground">Qté : {item.quantity}</p>
+                            </div>
+                            <p className="text-[12px] text-foreground shrink-0">
+                              {formatPrice(price * item.quantity)}
+                            </p>
+                          </div>
+                        );
+                      })}
                     </div>
-                  );
-                })}
+                    <div className="flex justify-between mt-2 text-[12px] text-muted-foreground">
+                      <span>Livraison</span>
+                      <span className={group.shipping === 0 ? "text-green-600" : "text-foreground"}>
+                        {group.shipping === 0 ? "Offerte" : formatPrice(group.shipping)}
+                      </span>
+                    </div>
+                  </div>
+                ))}
               </div>
 
               <div className="space-y-3 text-[13px] border-t border-border pt-4">
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Sous-total</span>
+                  <span className="text-muted-foreground">Sous-total produits</span>
                   <span className="text-foreground">{formatPrice(subtotal)}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Livraison</span>
+                  <span className="text-muted-foreground">Livraison totale</span>
                   <span className="text-foreground">
-                    {shipping === 0 ? "Offerte" : formatPrice(shipping)}
+                    {shippingTotal === 0 ? "Offerte" : formatPrice(shippingTotal)}
                   </span>
                 </div>
                 <div className="border-t border-border pt-3 mt-3">
@@ -511,8 +581,13 @@ export function CheckoutForm() {
                 )}
               </button>
 
-              <p className="text-[10px] text-muted-foreground text-center mt-3">
-                Vous serez redirigé vers Stripe pour le paiement
+              <p className="text-[10px] text-muted-foreground text-center mt-3 leading-relaxed">
+                En passant commande, vous acceptez nos{" "}
+                <a href="/cgv" target="_blank" className="underline hover:text-foreground transition-colors">
+                  conditions générales de vente
+                </a>
+                .<br />
+                Droit de rétractation de 14 jours.
               </p>
             </div>
           </div>

@@ -40,6 +40,7 @@ export async function GET(req: Request) {
           },
           product: { select: { title: true, slug: true, images: true } },
           variant: { select: { name: true } },
+          payouts: { select: { id: true, status: true, amount: true }, take: 1 },
         },
         orderBy: { createdAt: "desc" },
         skip: (page - 1) * limit,

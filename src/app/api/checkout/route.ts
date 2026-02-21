@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
 import { generateOrderNumber } from "@/lib/utils";
+import { calculateSellerShipping } from "@/lib/shipping";
 import { z } from "zod";
 
 const checkoutSchema = z.object({
@@ -35,7 +36,7 @@ export async function POST(req: Request) {
     if (!parsed.success) {
       return NextResponse.json(
         { success: false, error: parsed.error.issues[0]?.message ?? "Données invalides" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -57,17 +58,28 @@ export async function POST(req: Request) {
     if (!address) {
       return NextResponse.json(
         { success: false, error: "Adresse non trouvée" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
-    // Get cart items
+    // Get cart items with seller shipping config
     const cartItems = await prisma.cartItem.findMany({
       where: { userId: user.id },
       include: {
         product: {
           include: {
-            seller: { select: { id: true, shopName: true, commission: true } },
+            seller: {
+              select: {
+                id: true,
+                shopName: true,
+                commission: true,
+                shippingDomestic: true,
+                shippingEU: true,
+                shippingInternational: true,
+                freeShippingThreshold: true,
+                shipsFrom: true,
+              },
+            },
           },
         },
         variant: true,
@@ -77,19 +89,28 @@ export async function POST(req: Request) {
     if (cartItems.length === 0) {
       return NextResponse.json(
         { success: false, error: "Votre panier est vide" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
-    // Validate stock and calculate totals
+    // Validate stock and calculate per-item data
     let subtotal = 0;
-    const orderItemsData = [];
+    const orderItemsData: {
+      productId: string;
+      variantId: string | null;
+      sellerId: string;
+      quantity: number;
+      unitPrice: number;
+      subtotal: number;
+      commission: number;
+      shippingAmount: number;
+    }[] = [];
 
     for (const item of cartItems) {
       if (item.product.status !== "ACTIVE") {
         return NextResponse.json(
           { success: false, error: `"${item.product.title}" n'est plus disponible` },
-          { status: 400 }
+          { status: 400 },
         );
       }
 
@@ -100,7 +121,7 @@ export async function POST(req: Request) {
             success: false,
             error: `Stock insuffisant pour "${item.product.title}" (${stockAvailable} disponible${stockAvailable > 1 ? "s" : ""})`,
           },
-          { status: 400 }
+          { status: 400 },
         );
       }
 
@@ -118,10 +139,55 @@ export async function POST(req: Request) {
         unitPrice,
         subtotal: itemSubtotal,
         commission,
+        shippingAmount: 0, // Will be filled below per-seller
       });
     }
 
-    const shippingTotal = subtotal >= 150 ? 0 : 9.90;
+    // ── Calculate per-seller shipping ──
+    const sellerGroups = new Map<
+      string,
+      { shopName: string; config: typeof cartItems[0]["product"]["seller"]; itemIndices: number[]; sellerSubtotal: number }
+    >();
+
+    for (let i = 0; i < orderItemsData.length; i++) {
+      const item = orderItemsData[i];
+      const cartItem = cartItems.find(
+        (ci) => ci.product.id === item.productId && ci.variantId === item.variantId,
+      )!;
+      const seller = cartItem.product.seller;
+
+      const existing = sellerGroups.get(item.sellerId);
+      if (existing) {
+        existing.itemIndices.push(i);
+        existing.sellerSubtotal += item.subtotal;
+      } else {
+        sellerGroups.set(item.sellerId, {
+          shopName: seller.shopName,
+          config: seller,
+          itemIndices: [i],
+          sellerSubtotal: item.subtotal,
+        });
+      }
+    }
+
+    let shippingTotal = 0;
+    const sellerShippingMap = new Map<string, number>();
+
+    for (const [sellerId, group] of sellerGroups) {
+      const sellerShipping = calculateSellerShipping(
+        group.config,
+        address.country,
+        group.sellerSubtotal,
+      );
+      shippingTotal += sellerShipping;
+      sellerShippingMap.set(sellerId, sellerShipping);
+
+      // Assign shipping to the first item of this seller
+      if (group.itemIndices.length > 0 && sellerShipping > 0) {
+        orderItemsData[group.itemIndices[0]].shippingAmount = sellerShipping;
+      }
+    }
+
     const total = subtotal + shippingTotal;
     const commissionTotal = orderItemsData.reduce((sum, i) => sum + i.commission, 0);
 
@@ -151,8 +217,15 @@ export async function POST(req: Request) {
         },
       });
 
-      // Build Stripe line items
-      const lineItems = cartItems.map((item) => {
+      // Build Stripe line items — products
+      const lineItems: {
+        price_data: {
+          currency: string;
+          product_data: { name: string; images?: string[]; metadata: Record<string, string> };
+          unit_amount: number;
+        };
+        quantity: number;
+      }[] = cartItems.map((item) => {
         const unitPrice = item.variant?.price ?? item.product.price;
         return {
           price_data: {
@@ -165,26 +238,29 @@ export async function POST(req: Request) {
                 variantId: item.variantId || "",
               },
             },
-            unit_amount: Math.round(unitPrice * 100), // Stripe uses cents
+            unit_amount: Math.round(unitPrice * 100),
           },
           quantity: item.quantity,
         };
       });
 
-      // Add shipping if not free
-      if (shippingTotal > 0) {
-        lineItems.push({
-          price_data: {
-            currency: "eur",
-            product_data: {
-              name: "Frais de livraison",
-              images: undefined,
-              metadata: { productId: "", variantId: "" },
+      // Add per-seller shipping line items
+      for (const [sellerId, group] of sellerGroups) {
+        const sellerShipping = sellerShippingMap.get(sellerId) ?? 0;
+        if (sellerShipping > 0) {
+          lineItems.push({
+            price_data: {
+              currency: "eur",
+              product_data: {
+                name: `Livraison — ${group.shopName}`,
+                images: undefined,
+                metadata: { type: "shipping", sellerId },
+              },
+              unit_amount: Math.round(sellerShipping * 100),
             },
-            unit_amount: Math.round(shippingTotal * 100),
-          },
-          quantity: 1,
-        });
+            quantity: 1,
+          });
+        }
       }
 
       const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3006";
@@ -228,7 +304,7 @@ export async function POST(req: Request) {
           items: {
             create: orderItemsData.map((item) => ({
               ...item,
-              status: "CONFIRMED",
+              status: "CONFIRMED" as const,
             })),
           },
         },

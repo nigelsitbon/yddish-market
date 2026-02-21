@@ -23,7 +23,16 @@ export async function GET() {
         product: {
           include: {
             seller: {
-              select: { id: true, shopName: true, slug: true },
+              select: {
+                id: true,
+                shopName: true,
+                slug: true,
+                shippingDomestic: true,
+                shippingEU: true,
+                shippingInternational: true,
+                freeShippingThreshold: true,
+                shipsFrom: true,
+              },
             },
           },
         },

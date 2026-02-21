@@ -6,6 +6,8 @@ import {
   LayoutDashboard,
   Package,
   ShoppingCart,
+  Truck,
+  Euro,
   Settings,
   ArrowLeft,
   Store,
@@ -15,6 +17,8 @@ const navItems = [
   { label: "Vue d'ensemble", href: "/dashboard", icon: LayoutDashboard },
   { label: "Produits", href: "/dashboard/products", icon: Package },
   { label: "Commandes", href: "/dashboard/orders", icon: ShoppingCart },
+  { label: "Livraison", href: "/dashboard/shipping", icon: Truck },
+  { label: "Versements", href: "/dashboard/payouts", icon: Euro },
   { label: "Paramètres", href: "/dashboard/settings", icon: Settings },
 ];
 

@@ -12,6 +12,11 @@ export type CartProduct = {
     id: string;
     shopName: string;
     slug: string;
+    shippingDomestic: number;
+    shippingEU: number;
+    shippingInternational: number;
+    freeShippingThreshold: number | null;
+    shipsFrom: string;
   };
 };
 

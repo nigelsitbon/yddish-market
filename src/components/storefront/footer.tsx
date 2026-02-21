@@ -32,7 +32,7 @@ const footerSections = [
     title: "Legal",
     links: [
       { name: "Mentions legales", href: "/legal" },
-      { name: "CGV", href: "/terms" },
+      { name: "CGV", href: "/cgv" },
       { name: "Confidentialite", href: "/privacy" },
     ],
   },

@@ -199,6 +199,18 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
               )}
             </p>
 
+            {/* Retour & livraison */}
+            <div className="flex items-center gap-4 mt-4 text-[11px] text-muted-foreground">
+              <span className="flex items-center gap-1.5">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+                Retour sous 14 jours
+              </span>
+              <span className="flex items-center gap-1.5">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect width="16" height="13" x="6" y="4.5" rx="2"/><path d="m3 7 3-2.5"/><path d="m21 7-3-2.5"/><path d="M12 12h.01"/></svg>
+                Paiement sécurisé
+              </span>
+            </div>
+
             {/* Description */}
             <div className="mt-8 pt-8 border-t border-border">
               <h2 className="text-[11px] font-medium tracking-[0.15em] uppercase text-foreground mb-4">

@@ -5,6 +5,12 @@ import { ShoppingCart, Package, Truck, Check, X as XIcon } from "lucide-react";
 import { formatPrice } from "@/lib/utils";
 import { Badge } from "@/components/ui";
 
+type PayoutInfo = {
+  id: string;
+  status: string;
+  amount: number;
+};
+
 type OrderItemData = {
   id: string;
   quantity: number;
@@ -25,6 +31,7 @@ type OrderItemData = {
   };
   product: { title: string; slug: string; images: string[] };
   variant: { name: string } | null;
+  payouts: PayoutInfo[];
 };
 
 const statusConfig: Record<string, { label: string; variant: "default" | "success" | "destructive" | "outline" | "muted"; icon: typeof Package }> = {
@@ -180,6 +187,11 @@ export function OrdersList() {
                         </span>
                         <span>Total : {formatPrice(item.subtotal)}</span>
                         <span className="text-success">Net : {formatPrice(netRevenue)}</span>
+                        {item.payouts?.[0] && (
+                          <span className={item.payouts[0].status === "COMPLETED" ? "text-green-600" : item.payouts[0].status === "FAILED" ? "text-red-600" : "text-muted-foreground"}>
+                            {item.payouts[0].status === "COMPLETED" ? "Versé" : item.payouts[0].status === "FAILED" ? "Versement échoué" : "Versement en attente"}
+                          </span>
+                        )}
                       </div>
 
                       {/* Tracking */}

@@ -111,6 +111,19 @@ export async function POST(req: Request) {
         break;
       }
 
+      case "account.updated": {
+        const account = event.data.object as Stripe.Account;
+        if (account.id) {
+          const isOnboarded = !!(account.charges_enabled && account.details_submitted);
+          await prisma.sellerProfile.updateMany({
+            where: { stripeAccountId: account.id },
+            data: { stripeOnboarded: isOnboarded },
+          });
+          console.log(`[STRIPE_WEBHOOK] Account ${account.id} updated, onboarded: ${isOnboarded}`);
+        }
+        break;
+      }
+
       default:
         // Unhandled event type
         break;

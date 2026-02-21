@@ -70,12 +70,21 @@ model SellerProfile {
   totalSales      Int     @default(0)
   commission      Float   @default(0.20)
 
+  // Shipping settings
+  shippingDomestic      Float   @default(6.90)
+  shippingEU            Float   @default(12.90)
+  shippingInternational Float   @default(24.90)
+  freeShippingThreshold Float?
+  handlingDays          Int     @default(3)
+  shipsFrom             String  @default("FR")
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
   products   Product[]
   orderItems OrderItem[]
+  payouts    Payout[]
 
   @@index([slug])
   @@index([stripeAccountId])
@@ -258,6 +267,7 @@ model OrderItem {
   unitPrice      Float
   subtotal       Float
   commission     Float
+  shippingAmount Float       @default(0)
   status         OrderStatus @default(PENDING)
   trackingNumber String?
   trackingUrl    String?
@@ -270,6 +280,7 @@ model OrderItem {
   product Product        @relation(fields: [productId], references: [id])
   variant ProductVariant? @relation(fields: [variantId], references: [id])
   seller  SellerProfile  @relation(fields: [sellerId], references: [id])
+  payouts Payout[]
 
   @@index([orderId])
   @@index([sellerId])
@@ -306,6 +317,34 @@ model Message {
   @@index([senderId])
   @@index([receiverId])
   @@index([orderId])
+}
+
+enum PayoutStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+model Payout {
+  id               String       @id @default(cuid())
+  orderItemId      String
+  sellerId         String
+  amount           Float
+  commission       Float
+  shippingAmount   Float
+  stripeTransferId String?      @unique
+  status           PayoutStatus @default(PENDING)
+  failureReason    String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  orderItem OrderItem     @relation(fields: [orderItemId], references: [id])
+  seller    SellerProfile @relation(fields: [sellerId], references: [id])
+
+  @@index([sellerId])
+  @@index([status])
 }
 
 model SiteSetting {

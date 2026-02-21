@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
 import { updateOrderItemStatusSchema } from "@/lib/validators/order";
+import { createPayout } from "@/lib/payouts";
 
 /* ── PATCH /api/dashboard/orders/[orderId] — Mettre à jour le statut ── */
 export async function PATCH(
@@ -48,6 +49,16 @@ export async function PATCH(
       where: { id: orderItemId },
       data: updateData,
     });
+
+    // Trigger payout when order is delivered
+    if (status === "DELIVERED") {
+      try {
+        await createPayout(orderItemId);
+      } catch (payoutErr) {
+        console.error("[PAYOUT_ERROR]", payoutErr);
+        // Don't block the status update — payout failure is logged separately
+      }
+    }
 
     return NextResponse.json({ success: true, data: updated });
   } catch (error) {

@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Save, ExternalLink, Store } from "lucide-react";
+import { useSearchParams } from "next/navigation";
+import { Save, ExternalLink, Store, CreditCard, RefreshCw, CheckCircle } from "lucide-react";
 
 type SellerProfile = {
   id: string;
@@ -19,11 +20,14 @@ type SellerProfile = {
 };
 
 export function SettingsForm() {
+  const searchParams = useSearchParams();
   const [profile, setProfile] = useState<SellerProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
+  const [stripeLoading, setStripeLoading] = useState(false);
+  const [stripeMessage, setStripeMessage] = useState("");
 
   const [shopName, setShopName] = useState("");
   const [description, setDescription] = useState("");
@@ -41,6 +45,47 @@ export function SettingsForm() {
       .catch(console.error)
       .finally(() => setLoading(false));
   }, []);
+
+  // Vérifier le statut Stripe au retour de l'onboarding
+  useEffect(() => {
+    const stripeParam = searchParams.get("stripe");
+    if (stripeParam === "return") {
+      setStripeLoading(true);
+      setStripeMessage("Vérification de votre compte Stripe...");
+      fetch("/api/dashboard/stripe-connect/status")
+        .then((r) => r.json())
+        .then((json) => {
+          if (json.success && json.data.onboarded) {
+            setProfile((prev) => prev ? { ...prev, stripeOnboarded: true } : prev);
+            setStripeMessage("Compte Stripe connecté avec succès !");
+          } else if (json.success) {
+            setStripeMessage("L'onboarding n'est pas encore terminé. Veuillez compléter la configuration.");
+          }
+        })
+        .catch(() => setStripeMessage("Erreur lors de la vérification."))
+        .finally(() => setStripeLoading(false));
+    } else if (stripeParam === "refresh") {
+      setStripeMessage("Votre session Stripe a expiré. Cliquez ci-dessous pour reprendre.");
+    }
+  }, [searchParams]);
+
+  const handleStripeConnect = async () => {
+    setStripeLoading(true);
+    setStripeMessage("");
+    try {
+      const res = await fetch("/api/dashboard/stripe-connect", { method: "POST" });
+      const json = await res.json();
+      if (json.success && json.data?.url) {
+        window.location.href = json.data.url;
+      } else {
+        setStripeMessage(json.error || "Erreur Stripe Connect");
+        setStripeLoading(false);
+      }
+    } catch {
+      setStripeMessage("Erreur réseau");
+      setStripeLoading(false);
+    }
+  };
 
   const handleSave = async () => {
     setSaving(true);
@@ -198,26 +243,48 @@ export function SettingsForm() {
 
       {/* Stripe Connect */}
       <div className="bg-white border border-border p-5 space-y-4">
-        <h2 className="text-[13px] font-medium tracking-wide uppercase text-foreground">
-          Paiements — Stripe Connect
+        <h2 className="text-[13px] font-medium tracking-wide uppercase text-foreground flex items-center gap-2">
+          <CreditCard size={15} /> Paiements — Stripe Connect
         </h2>
+
+        {stripeMessage && (
+          <div className={`p-3 text-[12px] border ${
+            profile?.stripeOnboarded
+              ? "bg-green-50 border-green-200 text-green-700"
+              : "bg-blue-50 border-blue-200 text-blue-700"
+          }`}>
+            {stripeMessage}
+          </div>
+        )}
+
         {profile?.stripeOnboarded ? (
           <div className="flex items-center gap-2">
-            <div className="w-2 h-2 bg-success rounded-full" />
-            <p className="text-[12px] text-foreground">Compte Stripe connecté</p>
+            <CheckCircle size={16} className="text-green-600" />
+            <p className="text-[12px] text-foreground">Compte Stripe connecté — vous recevrez vos versements automatiquement</p>
           </div>
         ) : (
           <div>
             <p className="text-[12px] text-muted-foreground mb-3">
               Connectez votre compte Stripe pour recevoir les paiements de vos ventes.
-              La configuration se fera automatiquement lors du déploiement.
+              Vous serez redirigé vers Stripe pour compléter la vérification.
             </p>
             <button
               type="button"
-              disabled
-              className="flex items-center gap-2 h-10 px-4 border border-border text-[11px] text-muted-foreground cursor-not-allowed"
+              onClick={handleStripeConnect}
+              disabled={stripeLoading}
+              className="flex items-center gap-2 h-11 px-5 bg-[#635bff] text-white text-[12px] tracking-wide hover:bg-[#5249d9] transition-colors disabled:opacity-50"
             >
-              <Store size={14} /> Configurer Stripe Connect (bientôt)
+              {stripeLoading ? (
+                <>
+                  <RefreshCw size={14} className="animate-spin" />
+                  Chargement...
+                </>
+              ) : (
+                <>
+                  <Store size={14} />
+                  Configurer Stripe Connect
+                </>
+              )}
             </button>
           </div>
         )}

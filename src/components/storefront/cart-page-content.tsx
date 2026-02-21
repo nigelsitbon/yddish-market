@@ -63,8 +63,6 @@ export function CartPageContent() {
   };
 
   const subtotal = useCartStore.getState().subtotal();
-  const shippingEstimate = subtotal >= 150 ? 0 : 9.90;
-  const total = subtotal + shippingEstimate;
 
   // Loading state
   if (!isLoaded || isLoading) {
@@ -169,20 +167,15 @@ export function CartPageContent() {
                 <span className="text-foreground">{formatPrice(subtotal)}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Livraison estimée</span>
-                <span className="text-foreground">
-                  {shippingEstimate === 0 ? "Offerte" : formatPrice(shippingEstimate)}
+                <span className="text-muted-foreground">Livraison</span>
+                <span className="text-[12px] text-muted-foreground italic">
+                  Calculée à l&apos;étape suivante
                 </span>
               </div>
-              {shippingEstimate > 0 && (
-                <p className="text-[11px] text-accent">
-                  Plus que {formatPrice(150 - subtotal)} pour la livraison offerte
-                </p>
-              )}
               <div className="border-t border-border pt-3 mt-3">
                 <div className="flex justify-between text-[14px] font-medium">
-                  <span className="text-foreground">Total</span>
-                  <span className="text-foreground">{formatPrice(total)}</span>
+                  <span className="text-foreground">Sous-total</span>
+                  <span className="text-foreground">{formatPrice(subtotal)}</span>
                 </div>
               </div>
             </div>
