@@ -83,11 +83,20 @@ export async function POST(req: Request) {
     const inputBuffer = Buffer.from(arrayBuffer);
 
     // Resize + crop centré + conversion WebP
-    const { width, height } = DIMENSIONS[key];
-    const processedBuffer = await sharp(inputBuffer)
-      .resize(width, height, { fit: "cover", position: "centre" })
-      .webp({ quality: 85 })
-      .toBuffer();
+    let processedBuffer: Buffer;
+    try {
+      const { width, height } = DIMENSIONS[key];
+      processedBuffer = await sharp(inputBuffer)
+        .resize(width, height, { fit: "cover", position: "centre" })
+        .webp({ quality: 85 })
+        .toBuffer();
+    } catch (sharpError) {
+      console.error("[ADMIN_HOMEPAGE_SHARP]", sharpError);
+      return NextResponse.json({
+        success: false,
+        error: `Erreur traitement image: ${sharpError instanceof Error ? sharpError.message : "Unknown"}`,
+      }, { status: 500 });
+    }
 
     // Upload vers Supabase Storage
     const storagePath = `homepage/${key}.webp`;
@@ -101,7 +110,10 @@ export async function POST(req: Request) {
 
     if (uploadError) {
       console.error("[ADMIN_HOMEPAGE_UPLOAD]", uploadError);
-      return NextResponse.json({ success: false, error: "Erreur upload" }, { status: 500 });
+      return NextResponse.json({
+        success: false,
+        error: `Erreur upload: ${uploadError.message}`,
+      }, { status: 500 });
     }
 
     // Récupérer l'URL publique
@@ -121,6 +133,9 @@ export async function POST(req: Request) {
     return NextResponse.json({ success: true, data: { url, key } });
   } catch (error) {
     console.error("[ADMIN_HOMEPAGE_POST]", error);
-    return NextResponse.json({ success: false, error: "Internal error" }, { status: 500 });
+    return NextResponse.json({
+      success: false,
+      error: `Erreur serveur: ${error instanceof Error ? error.message : "Unknown"}`,
+    }, { status: 500 });
   }
 }
