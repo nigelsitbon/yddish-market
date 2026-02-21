@@ -9,6 +9,7 @@ import {
   Package,
   ShoppingCart,
   FolderTree,
+  ImageIcon,
   Shield,
   ArrowLeft,
 } from "lucide-react";
@@ -20,6 +21,7 @@ const navItems = [
   { label: "Produits", href: "/admin/products", icon: Package },
   { label: "Commandes", href: "/admin/orders", icon: ShoppingCart },
   { label: "Catégories", href: "/admin/categories", icon: FolderTree },
+  { label: "Homepage", href: "/admin/homepage", icon: ImageIcon },
 ];
 
 export function AdminSidebar() {

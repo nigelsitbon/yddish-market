@@ -37,9 +37,9 @@ async function getCategories() {
   });
 }
 
-/* ── Images Unsplash (placeholders premium — à remplacer par les vraies photos) ── */
+/* ── Images : fallback Unsplash (remplacées par les images admin si uploadées) ── */
 
-const IMAGES = {
+const DEFAULT_IMAGES = {
   hero: "https://images.unsplash.com/photo-1611944212129-29977ae1398c?w=1200&q=80&fit=crop",
   bijoux: "https://images.unsplash.com/photo-1515562141589-67f0d569b6f5?w=800&q=80&fit=crop",
   artAccessoires: "https://images.unsplash.com/photo-1545378889-08b7944e1639?w=800&q=80&fit=crop",
@@ -50,12 +50,50 @@ const IMAGES = {
   epicerieFine: "https://images.unsplash.com/photo-1474722883778-792e7990302f?w=600&q=80&fit=crop",
 };
 
+async function getHomepageImages() {
+  try {
+    const settings = await prisma.siteSetting.findMany({
+      where: {
+        key: {
+          in: [
+            "hero_image",
+            "bijoux_image",
+            "art_accessoires_image",
+            "fetes_image",
+            "artisan_image",
+            "vetements_image",
+            "livres_image",
+            "epicerie_fine_image",
+          ],
+        },
+      },
+    });
+
+    const map: Record<string, string> = {};
+    for (const s of settings) map[s.key] = s.value;
+
+    return {
+      hero: map.hero_image || DEFAULT_IMAGES.hero,
+      bijoux: map.bijoux_image || DEFAULT_IMAGES.bijoux,
+      artAccessoires: map.art_accessoires_image || DEFAULT_IMAGES.artAccessoires,
+      fetes: map.fetes_image || DEFAULT_IMAGES.fetes,
+      artisan: map.artisan_image || DEFAULT_IMAGES.artisan,
+      vetements: map.vetements_image || DEFAULT_IMAGES.vetements,
+      livres: map.livres_image || DEFAULT_IMAGES.livres,
+      epicerieFine: map.epicerie_fine_image || DEFAULT_IMAGES.epicerieFine,
+    };
+  } catch {
+    return DEFAULT_IMAGES;
+  }
+}
+
 /* ── Page ── */
 
 export default async function HomePage() {
-  const [products, categories] = await Promise.all([
+  const [products, categories, IMAGES] = await Promise.all([
     getFeaturedProducts(),
     getCategories(),
+    getHomepageImages(),
   ]);
 
   // Split products for the two grids
