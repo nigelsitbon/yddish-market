@@ -1,0 +1,57 @@
+import { NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
+import { getCurrentUser } from "@/lib/auth";
+import { updateOrderItemStatusSchema } from "@/lib/validators/order";
+
+/* ── PATCH /api/dashboard/orders/[orderId] — Mettre à jour le statut ── */
+export async function PATCH(
+  req: Request,
+  { params }: { params: Promise<{ orderId: string }> }
+) {
+  try {
+    const user = await getCurrentUser();
+    if (!user?.sellerProfile) {
+      return NextResponse.json({ success: false, error: "Non autorisé" }, { status: 403 });
+    }
+
+    const { orderId: orderItemId } = await params;
+
+    // Verify ownership
+    const orderItem = await prisma.orderItem.findFirst({
+      where: { id: orderItemId, sellerId: user.sellerProfile.id },
+    });
+    if (!orderItem) {
+      return NextResponse.json(
+        { success: false, error: "Commande non trouvée" },
+        { status: 404 }
+      );
+    }
+
+    const body = await req.json();
+    const parsed = updateOrderItemStatusSchema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json(
+        { success: false, error: parsed.error.issues[0]?.message ?? "Données invalides" },
+        { status: 400 }
+      );
+    }
+
+    const { status, trackingNumber, trackingUrl } = parsed.data;
+
+    const updateData: Record<string, unknown> = { status };
+    if (trackingNumber) updateData.trackingNumber = trackingNumber;
+    if (trackingUrl) updateData.trackingUrl = trackingUrl;
+    if (status === "SHIPPED") updateData.shippedAt = new Date();
+    if (status === "DELIVERED") updateData.deliveredAt = new Date();
+
+    const updated = await prisma.orderItem.update({
+      where: { id: orderItemId },
+      data: updateData,
+    });
+
+    return NextResponse.json({ success: true, data: updated });
+  } catch (error) {
+    console.error("[DASHBOARD_ORDER_PATCH]", error);
+    return NextResponse.json({ success: false, error: "Erreur serveur" }, { status: 500 });
+  }
+}
