@@ -116,8 +116,9 @@ export function CatalogFilters({ categories }: CatalogFiltersProps) {
         {/* Sort dropdown */}
         <div className="relative">
           <div className="flex items-center gap-1">
-            <span className="text-[13px] text-muted-foreground">Trier</span>
+            <label htmlFor="sort-select" className="text-[13px] text-muted-foreground">Trier</label>
             <select
+              id="sort-select"
               value={activeSort}
               onChange={(e) => updateParams("sort", e.target.value)}
               className="text-[13px] text-foreground bg-transparent border-0 focus:outline-none cursor-pointer appearance-none pr-5"
@@ -139,9 +140,9 @@ export function CatalogFilters({ categories }: CatalogFiltersProps) {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {/* Categories */}
             <div>
-              <h3 className="text-[11px] font-medium tracking-[0.15em] uppercase text-foreground mb-4">
+              <h2 className="text-[11px] font-medium tracking-[0.15em] uppercase text-foreground mb-4">
                 Categories
-              </h3>
+              </h2>
               <div className="space-y-1">
                 <button
                   type="button"
@@ -191,9 +192,9 @@ export function CatalogFilters({ categories }: CatalogFiltersProps) {
 
             {/* Price */}
             <div>
-              <h3 className="text-[11px] font-medium tracking-[0.15em] uppercase text-foreground mb-4">
+              <h2 className="text-[11px] font-medium tracking-[0.15em] uppercase text-foreground mb-4">
                 Prix
-              </h3>
+              </h2>
               <div className="space-y-1">
                 {priceRanges.map((range) => (
                   <button

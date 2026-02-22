@@ -210,6 +210,7 @@ export function Header() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Que recherchez-vous ?"
+                aria-label="Rechercher un produit"
                 className="w-full h-10 pl-8 pr-10 bg-transparent text-sm border-b border-foreground focus:outline-none placeholder:text-muted-foreground"
                 autoFocus
               />
