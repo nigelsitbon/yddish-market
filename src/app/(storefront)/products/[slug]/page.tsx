@@ -6,7 +6,7 @@ import { AddToCartButton } from "@/components/storefront/add-to-cart-button";
 import { FavoriteButton } from "@/components/storefront/favorite-button";
 import { ProductCard } from "@/components/storefront/product-card";
 import { formatPrice } from "@/lib/utils";
-import { Star } from "lucide-react";
+import { Star, Package, Truck, Check } from "@/components/ui/icons";
 
 export const dynamic = "force-dynamic";
 
@@ -97,11 +97,11 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
           <Link href="/" className="hover:text-foreground transition-colors">Accueil</Link>
           <span>&gt;</span>
           {primaryCategory ? (
-            <Link href={`/products?category=${primaryCategory.slug}`} className="hover:text-foreground transition-colors">
+            <Link href={`/?category=${primaryCategory.slug}`} className="hover:text-foreground transition-colors">
               {primaryCategory.name}
             </Link>
           ) : (
-            <Link href="/products" className="hover:text-foreground transition-colors">Produits</Link>
+            <Link href="/" className="hover:text-foreground transition-colors">Produits</Link>
           )}
           <span>&gt;</span>
           <span className="text-foreground">{product.title}</span>
@@ -252,17 +252,60 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
 
             {/* Seller card */}
             <div className="mt-6 pt-6 border-t border-border">
-              <Link href={`/seller/${product.seller.slug}`} className="flex items-center gap-3 group">
-                <div className="w-10 h-10 bg-[#F5F5F5] flex items-center justify-center text-[11px] text-muted-foreground">
-                  {product.seller.shopName.charAt(0)}
+              <Link
+                href={`/seller/${product.seller.slug}`}
+                className="block bg-[#FAFAF7] border border-border/60 p-4 hover:border-foreground/20 transition-colors group"
+              >
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-10 h-10 bg-foreground text-[#FFFFFF] flex items-center justify-center text-[13px] font-medium shrink-0">
+                    {product.seller.shopName.charAt(0).toUpperCase()}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[13px] text-foreground font-medium group-hover:underline truncate">
+                      {product.seller.shopName}
+                    </p>
+                    <div className="flex items-center gap-2 mt-0.5">
+                      {product.seller.verified && (
+                        <span className="flex items-center gap-0.5 text-[10px] text-accent">
+                          <Check size={10} strokeWidth={2} />
+                          Certifié
+                        </span>
+                      )}
+                      {product.seller.totalSales > 0 && (
+                        <span className="text-[11px] text-muted-foreground">
+                          {product.seller.totalSales} vente{product.seller.totalSales > 1 ? "s" : ""}
+                        </span>
+                      )}
+                      {product.seller.rating > 0 && (
+                        <span className="flex items-center gap-0.5 text-[11px] text-muted-foreground">
+                          <Star size={10} strokeWidth={1.5} className="fill-foreground text-foreground" />
+                          {product.seller.rating.toFixed(1)}
+                        </span>
+                      )}
+                    </div>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-[13px] text-foreground group-hover:underline">
-                    {product.seller.shopName}
+
+                {product.seller.description && (
+                  <p className="text-[11px] text-muted-foreground leading-relaxed line-clamp-2 mb-3">
+                    {product.seller.description}
                   </p>
-                  <p className="text-[11px] text-muted-foreground">
-                    {product.seller.totalSales} ventes &middot; {product.seller.rating}/5
-                  </p>
+                )}
+
+                <div className="flex items-center gap-4 text-[10px] text-muted-foreground">
+                  <span className="flex items-center gap-1">
+                    <Truck size={11} strokeWidth={1.5} />
+                    Expédié sous {product.seller.handlingDays}j
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <Package size={11} strokeWidth={1.5} />
+                    Depuis {product.seller.shipsFrom === "FR" ? "France" : product.seller.shipsFrom === "IL" ? "Israël" : product.seller.shipsFrom}
+                  </span>
+                  {product.seller.freeShippingThreshold && (
+                    <span className="text-accent font-medium">
+                      Livraison offerte dès {formatPrice(product.seller.freeShippingThreshold)}
+                    </span>
+                  )}
                 </div>
               </Link>
             </div>

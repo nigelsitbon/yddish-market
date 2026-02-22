@@ -2,10 +2,10 @@ import { forwardRef, type ButtonHTMLAttributes } from "react";
 import { cn } from "@/lib/utils";
 
 const variants = {
-  default: "bg-accent text-white hover:bg-accent-hover",
+  default: "bg-accent text-[#FFFFFF] hover:bg-accent-hover",
   outline: "border border-border bg-transparent hover:bg-muted text-foreground",
   ghost: "hover:bg-muted text-foreground",
-  destructive: "bg-destructive text-white hover:bg-destructive/90",
+  destructive: "bg-destructive text-[#FFFFFF] hover:bg-destructive/90",
   link: "text-accent underline-offset-4 hover:underline p-0 h-auto",
 } as const;
 

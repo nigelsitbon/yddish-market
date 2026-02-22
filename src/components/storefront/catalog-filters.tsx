@@ -68,10 +68,14 @@ export function CatalogFilters({ categories }: CatalogFiltersProps) {
           <button
             type="button"
             onClick={() => setFiltersOpen(!filtersOpen)}
-            className="flex items-center gap-2 text-[13px] text-foreground hover:opacity-60 transition-opacity"
+            className={`flex items-center gap-2 text-[13px] px-3 py-1.5 border transition-colors ${
+              filtersOpen
+                ? "border-foreground bg-foreground text-[#FFFFFF]"
+                : "border-border text-foreground hover:border-foreground"
+            }`}
           >
-            <SlidersHorizontal size={16} strokeWidth={1.5} />
-            Tous les filtres
+            {filtersOpen ? <X size={14} strokeWidth={1.5} /> : <SlidersHorizontal size={14} strokeWidth={1.5} />}
+            {filtersOpen ? "Fermer" : "Filtres"}
           </button>
 
           {/* Active filter pills */}

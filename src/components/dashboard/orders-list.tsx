@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { ShoppingCart, Package, Truck, Check, X as XIcon } from "lucide-react";
+import { ShoppingCart, Package, Truck, Check, X as XIcon } from "@/components/ui/icons";
 import { formatPrice } from "@/lib/utils";
 import { Badge } from "@/components/ui";
 
@@ -45,6 +45,7 @@ const statusConfig: Record<string, { label: string; variant: "default" | "succes
 };
 
 const nextStatus: Record<string, string> = {
+  PENDING: "CONFIRMED",
   CONFIRMED: "PROCESSING",
   PROCESSING: "SHIPPED",
   SHIPPED: "DELIVERED",
@@ -121,7 +122,7 @@ export function OrdersList() {
             onClick={() => setStatusFilter(s)}
             className={`h-9 px-3 text-[11px] tracking-wide border transition-colors ${
               statusFilter === s
-                ? "border-foreground bg-foreground text-white"
+                ? "border-foreground bg-foreground text-[#FFFFFF]"
                 : "border-border bg-white text-muted-foreground hover:text-foreground"
             }`}
           >
@@ -209,7 +210,7 @@ export function OrdersList() {
                               type="button"
                               onClick={() => setTrackingModal(item.id)}
                               disabled={updatingId === item.id}
-                              className="flex items-center gap-1.5 h-8 px-3 text-[11px] bg-foreground text-white hover:bg-foreground/90 transition-colors disabled:opacity-50"
+                              className="flex items-center gap-1.5 h-8 px-3 text-[11px] bg-foreground text-[#FFFFFF] hover:bg-foreground/90 transition-colors disabled:opacity-50"
                             >
                               <Truck size={12} /> Marquer expédiée
                             </button>
@@ -218,7 +219,7 @@ export function OrdersList() {
                               type="button"
                               onClick={() => handleUpdateStatus(item.id, next)}
                               disabled={updatingId === item.id}
-                              className="flex items-center gap-1.5 h-8 px-3 text-[11px] bg-foreground text-white hover:bg-foreground/90 transition-colors disabled:opacity-50"
+                              className="flex items-center gap-1.5 h-8 px-3 text-[11px] bg-foreground text-[#FFFFFF] hover:bg-foreground/90 transition-colors disabled:opacity-50"
                             >
                               {updatingId === item.id ? (
                                 <span className="w-3 h-3 border border-white/30 border-t-white rounded-full animate-spin" />
@@ -250,7 +251,7 @@ export function OrdersList() {
                         <button
                           type="button"
                           onClick={() => handleUpdateStatus(item.id, "SHIPPED", trackingNumber || undefined)}
-                          className="h-9 px-4 text-[11px] bg-foreground text-white"
+                          className="h-9 px-4 text-[11px] bg-foreground text-[#FFFFFF]"
                         >
                           Confirmer
                         </button>

@@ -65,14 +65,14 @@ export function AddToCartButton({ productId, variantId, disabled, quantity = 1 }
         type="button"
         onClick={handleAdd}
         disabled={disabled || loading}
-        className={`w-full flex items-center justify-center gap-2 h-12 text-[13px] tracking-wide font-medium transition-all ${
+        className={`w-full flex items-center justify-center gap-2 h-13 text-[14px] tracking-wide font-semibold transition-all shadow-md ${
           added
-            ? "bg-foreground text-white"
+            ? "bg-foreground text-[#FFFFFF]"
             : error
-            ? "bg-destructive text-white"
+            ? "bg-destructive text-[#FFFFFF]"
             : disabled
-            ? "bg-[#E5E5E5] text-muted-foreground cursor-not-allowed"
-            : "bg-foreground text-white hover:bg-foreground/90"
+            ? "bg-[#E5E5E5] text-muted-foreground cursor-not-allowed shadow-none"
+            : "bg-accent text-[#FFFFFF] hover:bg-accent/90"
         }`}
       >
         {added ? (

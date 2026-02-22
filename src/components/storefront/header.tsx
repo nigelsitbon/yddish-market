@@ -152,7 +152,7 @@ export function Header() {
                   >
                     <ShoppingBag size={20} strokeWidth={1.5} />
                     {cartItemCount > 0 && (
-                      <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] flex items-center justify-center bg-foreground text-white text-[10px] font-medium px-1">
+                      <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] flex items-center justify-center bg-foreground text-[#FFFFFF] text-[10px] font-medium px-1">
                         {cartItemCount}
                       </span>
                     )}
@@ -178,7 +178,7 @@ export function Header() {
                   >
                     <ShoppingBag size={20} strokeWidth={1.5} />
                     {cartItemCount > 0 && (
-                      <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] flex items-center justify-center bg-foreground text-white text-[10px] font-medium px-1">
+                      <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] flex items-center justify-center bg-foreground text-[#FFFFFF] text-[10px] font-medium px-1">
                         {cartItemCount}
                       </span>
                     )}

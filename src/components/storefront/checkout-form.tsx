@@ -238,7 +238,7 @@ export function CheckoutForm() {
         </p>
         <Link
           href="/"
-          className="inline-flex items-center gap-2 h-12 px-8 bg-foreground text-white text-[13px] tracking-wide hover:bg-foreground/90 transition-colors"
+          className="inline-flex items-center gap-2 h-12 px-8 bg-foreground text-[#FFFFFF] text-[13px] tracking-wide hover:bg-foreground/90 transition-colors"
         >
           Explorer la boutique
         </Link>

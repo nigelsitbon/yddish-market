@@ -86,7 +86,7 @@ export function OrderConfirmationContent() {
         </p>
         <Link
           href="/"
-          className="inline-flex items-center gap-2 h-12 px-8 bg-foreground text-white text-[13px] tracking-wide hover:bg-foreground/90 transition-colors"
+          className="inline-flex items-center gap-2 h-12 px-8 bg-foreground text-[#FFFFFF] text-[13px] tracking-wide hover:bg-foreground/90 transition-colors"
         >
           Retour à l'accueil
         </Link>
@@ -98,7 +98,7 @@ export function OrderConfirmationContent() {
     <div className="mx-auto max-w-[700px] px-4 sm:px-8 py-12 lg:py-16">
       {/* Success icon */}
       <div className="text-center mb-8">
-        <div className="w-16 h-16 bg-foreground text-white flex items-center justify-center mx-auto mb-4">
+        <div className="w-16 h-16 bg-foreground text-[#FFFFFF] flex items-center justify-center mx-auto mb-4">
           <Check size={28} strokeWidth={2} />
         </div>
         <h1 className="text-[22px] font-light text-foreground mb-1">
@@ -197,7 +197,7 @@ export function OrderConfirmationContent() {
       <div className="flex flex-col sm:flex-row gap-3">
         <Link
           href="/"
-          className="flex items-center justify-center gap-2 h-12 px-8 bg-foreground text-white text-[13px] tracking-wide hover:bg-foreground/90 transition-colors"
+          className="flex items-center justify-center gap-2 h-12 px-8 bg-foreground text-[#FFFFFF] text-[13px] tracking-wide hover:bg-foreground/90 transition-colors"
         >
           Continuer mes achats
           <ArrowRight size={16} strokeWidth={1.5} />

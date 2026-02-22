@@ -20,7 +20,10 @@ export {
   Search,
   Shield,
   ShoppingBag,
+  ShoppingCart,
   SlidersHorizontal,
+  Star,
   Store,
+  Truck,
   X,
 } from "lucide-react";

@@ -58,7 +58,7 @@ export function BecomeSellerForm() {
       <div className="max-w-lg mx-auto">
         {/* Header */}
         <div className="text-center mb-10">
-          <div className="w-14 h-14 bg-foreground text-white flex items-center justify-center mx-auto mb-4">
+          <div className="w-14 h-14 bg-foreground text-[#FFFFFF] flex items-center justify-center mx-auto mb-4">
             <Store size={24} strokeWidth={1.5} />
           </div>
           <h1 className="text-[24px] font-light text-foreground mb-2">
@@ -142,7 +142,7 @@ export function BecomeSellerForm() {
           <button
             type="submit"
             disabled={isSubmitting || !shopName.trim()}
-            className="flex items-center justify-center gap-2 w-full h-12 mt-4 bg-foreground text-white text-[13px] tracking-wide font-medium hover:bg-foreground/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex items-center justify-center gap-2 w-full h-13 mt-4 bg-accent text-[#FFFFFF] text-[14px] tracking-wide font-semibold hover:bg-accent/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-md"
           >
             {isSubmitting ? (
               <span className="inline-block w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
