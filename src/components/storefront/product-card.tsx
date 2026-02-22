@@ -79,7 +79,7 @@ export function ProductCard({ product }: { product: ProductCardData }) {
 
         {/* Discount badge */}
         {hasDiscount && (
-          <span className="absolute top-3 left-3 bg-sale text-white text-[10px] font-medium px-2 py-0.5 tracking-wide">
+          <span className="absolute top-3 left-3 bg-sale text-[#FFFFFF] text-[10px] font-medium px-2 py-0.5 tracking-wide">
             -{Math.round(((product.comparePrice! - product.price) / product.comparePrice!) * 100)}%
           </span>
         )}

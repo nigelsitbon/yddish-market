@@ -306,7 +306,7 @@ export function AdminCategories() {
                 <button
                   onClick={() => handleSaveEdit(cat.id)}
                   disabled={editLoading}
-                  className="h-8 px-3 text-[11px] font-medium bg-foreground text-background hover:opacity-80 transition-opacity disabled:opacity-40"
+                  className="h-8 px-3 text-[11px] font-medium bg-foreground text-[#FFFFFF] hover:opacity-80 transition-opacity disabled:opacity-40"
                 >
                   {editLoading ? "..." : "Sauver"}
                 </button>
@@ -396,7 +396,7 @@ export function AdminCategories() {
         </div>
         <button
           onClick={() => setShowAdd((v) => !v)}
-          className="h-9 px-4 text-[12px] font-medium bg-foreground text-background hover:opacity-80 transition-opacity"
+          className="h-9 px-4 text-[12px] font-medium bg-foreground text-[#FFFFFF] hover:opacity-80 transition-opacity"
         >
           {showAdd ? "Fermer" : "Ajouter"}
         </button>
@@ -482,7 +482,7 @@ export function AdminCategories() {
             <button
               onClick={handleCreate}
               disabled={addLoading || !addName.trim()}
-              className="h-9 px-5 text-[12px] font-medium bg-foreground text-background hover:opacity-80 transition-opacity disabled:opacity-40"
+              className="h-9 px-5 text-[12px] font-medium bg-foreground text-[#FFFFFF] hover:opacity-80 transition-opacity disabled:opacity-40"
             >
               {addLoading ? "Création..." : "Créer"}
             </button>

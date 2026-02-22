@@ -222,7 +222,7 @@ function ImageCard({ slot, currentImage, isUploading, isSuccess, isLoading, onUp
         {/* Upload overlay */}
         {isUploading && (
           <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-            <div className="flex items-center gap-2 text-white text-[12px]">
+            <div className="flex items-center gap-2 text-[#FFFFFF] text-[12px]">
               <Loader2 size={16} className="animate-spin" />
               Traitement en cours...
             </div>
@@ -232,7 +232,7 @@ function ImageCard({ slot, currentImage, isUploading, isSuccess, isLoading, onUp
         {/* Success overlay */}
         {isSuccess && (
           <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-            <div className="flex items-center gap-2 text-white text-[12px]">
+            <div className="flex items-center gap-2 text-[#FFFFFF] text-[12px]">
               <Check size={16} />
               Image mise à jour
             </div>
@@ -256,7 +256,7 @@ function ImageCard({ slot, currentImage, isUploading, isSuccess, isLoading, onUp
             type="button"
             onClick={() => inputRef.current?.click()}
             disabled={isUploading}
-            className="flex items-center gap-1.5 h-8 px-3 text-[11px] tracking-wide border border-foreground text-foreground hover:bg-foreground hover:text-white transition-colors disabled:opacity-50"
+            className="flex items-center gap-1.5 h-8 px-3 text-[11px] tracking-wide border border-foreground text-foreground hover:bg-foreground hover:text-[#FFFFFF] transition-colors disabled:opacity-50"
           >
             <Upload size={12} />
             {currentImage ? "Changer" : "Uploader"}

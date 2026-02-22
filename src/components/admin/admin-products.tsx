@@ -256,7 +256,7 @@ export function AdminProducts() {
                 onClick={() => setStatus(s.value)}
                 className={`rounded-full px-3 py-1.5 text-xs font-medium transition-all ${
                   status === s.value
-                    ? "bg-[#1A1A2E] text-white"
+                    ? "bg-[#1A1A2E] text-[#FFFFFF]"
                     : "bg-gray-50 text-gray-500 hover:bg-gray-100"
                 }`}
               >
@@ -274,7 +274,7 @@ export function AdminProducts() {
             }
             className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium transition-all ${
               featured === true
-                ? "bg-[#C5A55A] text-white"
+                ? "bg-[#C5A55A] text-[#FFFFFF]"
                 : featured === false
                 ? "bg-gray-200 text-gray-600"
                 : "bg-gray-50 text-gray-500 hover:bg-gray-100"
@@ -528,7 +528,7 @@ export function AdminProducts() {
                       onClick={() => setPage(item as number)}
                       className={`min-w-[2rem] rounded-lg px-2 py-1.5 text-xs font-medium transition-colors ${
                         page === item
-                          ? "bg-[#1A1A2E] text-white"
+                          ? "bg-[#1A1A2E] text-[#FFFFFF]"
                           : "text-gray-500 hover:bg-gray-50"
                       }`}
                     >

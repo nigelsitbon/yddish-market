@@ -224,7 +224,7 @@ export function CartDrawer() {
               <Link
                 href="/cart"
                 onClick={() => setOpen(false)}
-                className="flex items-center justify-center w-full h-12 border border-foreground text-foreground text-[13px] tracking-wide hover:bg-foreground hover:text-white transition-colors"
+                className="flex items-center justify-center w-full h-12 border border-foreground text-foreground text-[13px] tracking-wide hover:bg-foreground hover:text-[#FFFFFF] transition-colors"
               >
                 Voir le panier
               </Link>

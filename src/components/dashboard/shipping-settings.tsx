@@ -269,7 +269,7 @@ export function ShippingSettings() {
           <button
             onClick={handleSave}
             disabled={saving}
-            className="h-11 px-8 bg-foreground text-white text-[12px] uppercase tracking-wider hover:bg-foreground/90 transition-colors disabled:opacity-50"
+            className="h-11 px-8 bg-foreground text-[#FFFFFF] text-[12px] uppercase tracking-wider hover:bg-foreground/90 transition-colors disabled:opacity-50"
           >
             {saving ? "Enregistrement..." : "Enregistrer"}
           </button>

@@ -201,7 +201,7 @@ export function AdminSellers() {
               }}
               className={`h-10 px-4 text-[12px] tracking-wide border transition-colors ${
                 verifiedFilter === btn.value
-                  ? "bg-foreground text-white border-foreground"
+                  ? "bg-foreground text-[#FFFFFF] border-foreground"
                   : "bg-white text-muted-foreground border-border hover:border-foreground hover:text-foreground"
               }`}
             >

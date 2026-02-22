@@ -119,7 +119,7 @@ export function PayoutsList() {
             onClick={() => setStatusFilter(s)}
             className={`h-9 px-3 text-[11px] tracking-wide border transition-colors ${
               statusFilter === s
-                ? "border-foreground bg-foreground text-white"
+                ? "border-foreground bg-foreground text-[#FFFFFF]"
                 : "border-border bg-white text-muted-foreground hover:text-foreground"
             }`}
           >

@@ -201,7 +201,7 @@ export function SettingsForm() {
           type="button"
           onClick={handleSave}
           disabled={saving || !shopName.trim()}
-          className="flex items-center gap-2 h-11 px-6 bg-foreground text-white text-[12px] tracking-wide hover:bg-foreground/90 transition-colors disabled:opacity-50"
+          className="flex items-center gap-2 h-11 px-6 bg-foreground text-[#FFFFFF] text-[12px] tracking-wide hover:bg-foreground/90 transition-colors disabled:opacity-50"
         >
           {saving ? (
             <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -272,7 +272,7 @@ export function SettingsForm() {
               type="button"
               onClick={handleStripeConnect}
               disabled={stripeLoading}
-              className="flex items-center gap-2 h-11 px-5 bg-[#635bff] text-white text-[12px] tracking-wide hover:bg-[#5249d9] transition-colors disabled:opacity-50"
+              className="flex items-center gap-2 h-11 px-5 bg-[#635bff] text-[#FFFFFF] text-[12px] tracking-wide hover:bg-[#5249d9] transition-colors disabled:opacity-50"
             >
               {stripeLoading ? (
                 <>

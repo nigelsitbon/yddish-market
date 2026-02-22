@@ -209,7 +209,7 @@ export function AdminUsers() {
                 onClick={() => handleRoleFilter(r)}
                 className={`px-3 py-1.5 text-[11px] tracking-wider uppercase transition-colors ${
                   roleFilter === r
-                    ? "bg-[#1A1A2E] text-white"
+                    ? "bg-[#1A1A2E] text-[#FFFFFF]"
                     : "bg-transparent text-[#1A1A2E]/50 hover:text-[#1A1A2E]"
                 }`}
               >

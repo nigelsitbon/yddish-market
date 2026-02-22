@@ -84,7 +84,7 @@ export function ProductsList() {
         </div>
         <Link
           href="/dashboard/products/new"
-          className="flex items-center gap-2 h-11 px-6 bg-accent text-white text-[13px] font-medium tracking-wide hover:bg-accent/90 transition-colors shadow-sm"
+          className="flex items-center gap-2 h-11 px-6 bg-accent text-[#FFFFFF] text-[13px] font-medium tracking-wide hover:bg-accent/90 transition-colors shadow-sm"
         >
           <Plus size={16} strokeWidth={2} />
           Nouveau produit
@@ -111,7 +111,7 @@ export function ProductsList() {
               onClick={() => { setStatusFilter(s); setPage(1); }}
               className={`h-10 px-3 text-[11px] tracking-wide border transition-colors ${
                 statusFilter === s
-                  ? "border-foreground bg-foreground text-white"
+                  ? "border-foreground bg-foreground text-[#FFFFFF]"
                   : "border-border bg-white text-muted-foreground hover:text-foreground"
               }`}
             >
@@ -140,7 +140,7 @@ export function ProductsList() {
             {!search && statusFilter === "all" && (
               <Link
                 href="/dashboard/products/new"
-                className="inline-flex items-center gap-2 h-11 px-8 bg-accent text-white text-[13px] font-medium tracking-wide hover:bg-accent/90 transition-colors shadow-sm"
+                className="inline-flex items-center gap-2 h-11 px-8 bg-accent text-[#FFFFFF] text-[13px] font-medium tracking-wide hover:bg-accent/90 transition-colors shadow-sm"
               >
                 <Plus size={16} strokeWidth={2} />
                 Créer mon premier produit

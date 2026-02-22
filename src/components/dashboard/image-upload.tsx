@@ -130,7 +130,7 @@ export function ImageUpload({ images, onChange, maxImages = 8 }: ImageUploadProp
               </div>
               {/* Badge */}
               {i === 0 && (
-                <span className="absolute top-1.5 left-1.5 px-1.5 py-0.5 bg-foreground text-white text-[9px] tracking-wide uppercase">
+                <span className="absolute top-1.5 left-1.5 px-1.5 py-0.5 bg-foreground text-[#FFFFFF] text-[9px] tracking-wide uppercase">
                   Principale
                 </span>
               )}

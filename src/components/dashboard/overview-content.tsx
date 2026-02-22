@@ -89,7 +89,7 @@ export function OverviewContent() {
         </div>
         <Link
           href="/dashboard/products/new"
-          className="flex items-center gap-2 h-10 px-4 bg-foreground text-white text-[12px] tracking-wide hover:bg-foreground/90 transition-colors"
+          className="flex items-center gap-2 h-10 px-4 bg-foreground text-[#FFFFFF] text-[12px] tracking-wide hover:bg-foreground/90 transition-colors"
         >
           <Plus size={14} strokeWidth={1.5} />
           Nouveau produit

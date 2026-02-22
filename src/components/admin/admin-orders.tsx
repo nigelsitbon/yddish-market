@@ -165,7 +165,7 @@ export function AdminOrders() {
               onClick={() => setStatus(s)}
               className={`px-3 py-1.5 text-xs tracking-wide uppercase transition-colors ${
                 status === s
-                  ? "bg-[#1A1A2E] text-white"
+                  ? "bg-[#1A1A2E] text-[#FFFFFF]"
                   : "bg-[#F5F5F0] text-[#1A1A2E]/60 hover:bg-[#E8E8E3]"
               }`}
             >
@@ -305,7 +305,7 @@ export function AdminOrders() {
                   onClick={() => setPage(item)}
                   className={`min-w-[32px] px-2 py-1.5 text-xs transition-colors ${
                     page === item
-                      ? "bg-[#1A1A2E] text-white"
+                      ? "bg-[#1A1A2E] text-[#FFFFFF]"
                       : "text-[#1A1A2E]/60 hover:bg-[#F5F5F0]"
                   }`}
                 >

@@ -456,7 +456,7 @@ export function ProductForm({ productId }: { productId?: string }) {
               className="flex-1 h-10 px-3 text-[12px] border border-border focus:border-foreground focus:outline-none"
               onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addTag(); } }}
             />
-            <button type="button" onClick={addTag} className="h-10 px-4 text-[11px] bg-foreground text-white">
+            <button type="button" onClick={addTag} className="h-10 px-4 text-[11px] bg-foreground text-[#FFFFFF]">
               Ajouter
             </button>
           </div>
@@ -496,7 +496,7 @@ export function ProductForm({ productId }: { productId?: string }) {
             type="button"
             onClick={() => handleSubmit("ACTIVE")}
             disabled={saving || !form.title || !form.description || form.categoryIds.length === 0 || form.price <= 0}
-            className="flex items-center gap-2 h-11 px-6 bg-foreground text-white text-[12px] tracking-wide hover:bg-foreground/90 transition-colors disabled:opacity-50"
+            className="flex items-center gap-2 h-11 px-6 bg-foreground text-[#FFFFFF] text-[12px] tracking-wide hover:bg-foreground/90 transition-colors disabled:opacity-50"
           >
             {saving ? (
               <span className="inline-block w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
