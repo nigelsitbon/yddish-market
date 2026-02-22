@@ -11,7 +11,6 @@ import {
   X,
   LayoutDashboard,
   Shield,
-  Store,
 } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { useCartStore } from "@/stores/cart";
@@ -248,26 +247,6 @@ export function Header() {
             >
               Épicerie Fine
             </Link>
-            {/* "Devenir vendeur" link — only for non-sellers */}
-            {isSignedIn && !isSeller && (
-              <Link
-                href="/become-seller"
-                className="flex items-center gap-1.5 text-[13px] tracking-wide text-accent hover:opacity-80 transition-opacity"
-              >
-                <Store size={14} strokeWidth={1.5} />
-                Vendre
-              </Link>
-            )}
-            {/* Non-logged-in users see "Vendre" which triggers sign-in */}
-            {!isSignedIn && (
-              <Link
-                href="/become-seller"
-                className="flex items-center gap-1.5 text-[13px] tracking-wide text-accent hover:opacity-80 transition-opacity"
-              >
-                <Store size={14} strokeWidth={1.5} />
-                Vendre
-              </Link>
-            )}
           </div>
         </div>
       </nav>
@@ -306,7 +285,7 @@ export function Header() {
                     <Heart size={14} strokeWidth={1.5} />
                     Mes favoris
                   </Link>
-                  {isSeller ? (
+                  {isSeller && (
                     <Link
                       href="/dashboard"
                       className="flex items-center gap-2 py-2.5 text-[13px] tracking-wide text-foreground font-medium"
@@ -314,15 +293,6 @@ export function Header() {
                     >
                       <LayoutDashboard size={14} strokeWidth={1.5} />
                       Mon Dashboard vendeur
-                    </Link>
-                  ) : (
-                    <Link
-                      href="/become-seller"
-                      className="flex items-center gap-2 py-2.5 text-[13px] tracking-wide text-accent"
-                      onClick={() => setMobileMenuOpen(false)}
-                    >
-                      <Store size={14} strokeWidth={1.5} />
-                      Devenir vendeur
                     </Link>
                   )}
                   {isAdmin && (
@@ -337,24 +307,14 @@ export function Header() {
                   )}
                 </>
               ) : (
-                <>
-                  <Link
-                    href="/become-seller"
-                    className="flex items-center gap-2 py-2.5 text-[13px] tracking-wide text-accent"
-                    onClick={() => setMobileMenuOpen(false)}
+                <SignInButton mode="modal">
+                  <button
+                    type="button"
+                    className="block py-2.5 text-[13px] tracking-wide text-muted-foreground"
                   >
-                    <Store size={14} strokeWidth={1.5} />
-                    Devenir vendeur
-                  </Link>
-                  <SignInButton mode="modal">
-                    <button
-                      type="button"
-                      className="block py-2.5 text-[13px] tracking-wide text-muted-foreground"
-                    >
-                      Connexion
-                    </button>
-                  </SignInButton>
-                </>
+                    Connexion
+                  </button>
+                </SignInButton>
               )}
             </div>
           </div>

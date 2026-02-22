@@ -6,7 +6,7 @@ const footerSections = [
     links: [
       { name: "A propos", href: "/about" },
       { name: "Nos artisans", href: "/sellers" },
-      { name: "Devenir vendeur", href: "/sell" },
+      { name: "Devenir vendeur", href: "/become-seller" },
       { name: "Comment ca marche", href: "/how-it-works" },
     ],
   },
