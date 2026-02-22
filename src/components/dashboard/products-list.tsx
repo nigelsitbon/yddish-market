@@ -84,9 +84,9 @@ export function ProductsList() {
         </div>
         <Link
           href="/dashboard/products/new"
-          className="flex items-center gap-2 h-10 px-4 bg-foreground text-white text-[12px] tracking-wide hover:bg-foreground/90 transition-colors"
+          className="flex items-center gap-2 h-11 px-6 bg-accent text-white text-[13px] font-medium tracking-wide hover:bg-accent/90 transition-colors shadow-sm"
         >
-          <Plus size={14} strokeWidth={1.5} />
+          <Plus size={16} strokeWidth={2} />
           Nouveau produit
         </Link>
       </div>
@@ -140,9 +140,9 @@ export function ProductsList() {
             {!search && statusFilter === "all" && (
               <Link
                 href="/dashboard/products/new"
-                className="inline-flex items-center gap-2 h-10 px-6 bg-foreground text-white text-[12px] tracking-wide hover:bg-foreground/90 transition-colors"
+                className="inline-flex items-center gap-2 h-11 px-8 bg-accent text-white text-[13px] font-medium tracking-wide hover:bg-accent/90 transition-colors shadow-sm"
               >
-                <Plus size={14} />
+                <Plus size={16} strokeWidth={2} />
                 Créer mon premier produit
               </Link>
             )}
