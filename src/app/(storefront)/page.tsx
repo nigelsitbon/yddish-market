@@ -5,7 +5,8 @@ import { Prisma } from "@prisma/client";
 import { ProductCard, type ProductCardData } from "@/components/storefront/product-card";
 import { CatalogFilters } from "@/components/storefront/catalog-filters";
 
-export const dynamic = "force-dynamic";
+// ISR: rebuild page in background every 60s — keeps pages fast via CDN cache
+export const revalidate = 60;
 
 /* ── Data fetching ── */
 

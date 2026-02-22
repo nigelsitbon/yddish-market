@@ -8,7 +8,8 @@ import { ProductCard } from "@/components/storefront/product-card";
 import { formatPrice } from "@/lib/utils";
 import { Star, Package, Truck, Check } from "@/components/ui/icons";
 
-export const dynamic = "force-dynamic";
+// ISR: revalidate every 60s — product data cached on CDN
+export const revalidate = 60;
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;

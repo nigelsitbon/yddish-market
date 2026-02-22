@@ -4,7 +4,8 @@ import { prisma } from "@/lib/prisma";
 import { ProductCard, type ProductCardData } from "@/components/storefront/product-card";
 import { Star } from "lucide-react";
 
-export const dynamic = "force-dynamic";
+// ISR: revalidate every 60s
+export const revalidate = 60;
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;

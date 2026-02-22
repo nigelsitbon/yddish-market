@@ -5,7 +5,8 @@ import { Prisma } from "@prisma/client";
 import { ProductCard, type ProductCardData } from "@/components/storefront/product-card";
 import { CatalogFilters } from "@/components/storefront/catalog-filters";
 
-export const dynamic = "force-dynamic";
+// ISR: revalidate every 60s
+export const revalidate = 60;
 
 export const metadata = {
   title: "Tous les produits",

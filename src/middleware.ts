@@ -11,6 +11,7 @@ const isPublicRoute = createRouteMatcher([
   "/checkout(.*)",
   "/become-seller",
   "/api/webhooks/(.*)",
+  "/cgv",
 ]);
 
 export default clerkMiddleware(async (auth, req) => {
@@ -26,24 +27,13 @@ export default clerkMiddleware(async (auth, req) => {
     return NextResponse.redirect(signInUrl);
   }
 
-  // API routes: let them through — each API handler checks auth/role internally via getCurrentUser()
-  if (req.nextUrl.pathname.startsWith("/api/")) {
-    return NextResponse.next();
-  }
-
-  // Dashboard pages: any authenticated user can access (role check done in components via getCurrentUser)
-  // This avoids the issue where Clerk session claims don't reflect Prisma role updates
-  // A non-seller user accessing /dashboard will be handled by the dashboard layout/components
-
-  // Admin pages: role check is done in the admin layout via getCurrentUser()
-  // (Clerk session claims may not reflect Prisma role updates)
-
   return NextResponse.next();
 });
 
 export const config = {
+  // Only run middleware on page routes and API routes.
+  // Skip all static files, images, fonts, _next assets, and favicon.
   matcher: [
-    "/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
-    "/(api|trpc)(.*)",
+    "/((?!_next/static|_next/image|favicon\\.ico|logo\\.svg|.*\\.(?:png|jpg|jpeg|gif|webp|svg|ico|woff2?|ttf|css|js)).*)",
   ],
 };
