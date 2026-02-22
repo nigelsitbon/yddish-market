@@ -117,9 +117,11 @@ export function Header() {
 
             {/* Center: Logo */}
             <Link href="/" className="absolute left-1/2 -translate-x-1/2">
-              <h1 className="text-[22px] sm:text-[26px] font-bold tracking-[0.15em] text-foreground uppercase">
-                YDDISH MARKET
-              </h1>
+              <img
+                src="/logo.svg"
+                alt="YDDISH MARKET"
+                className="h-[28px] sm:h-[34px] w-auto"
+              />
             </Link>
 
             {/* Right: Icons */}
