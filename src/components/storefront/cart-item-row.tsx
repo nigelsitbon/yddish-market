@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { X } from "lucide-react";
+import { X } from "@/components/ui/icons";
 import { QuantitySelector } from "@/components/storefront/quantity-selector";
 import { formatPrice } from "@/lib/utils";
 import type { CartItem } from "@/stores/cart";

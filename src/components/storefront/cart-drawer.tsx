@@ -3,7 +3,7 @@
 import { useEffect, useCallback } from "react";
 import Link from "next/link";
 import { useUser } from "@clerk/nextjs";
-import { X, ShoppingBag, ArrowRight } from "lucide-react";
+import { X, ShoppingBag, ArrowRight } from "@/components/ui/icons";
 import { useCartStore } from "@/stores/cart";
 import { QuantitySelector } from "@/components/storefront/quantity-selector";
 import { formatPrice } from "@/lib/utils";

@@ -11,7 +11,7 @@ import {
   X,
   LayoutDashboard,
   Shield,
-} from "lucide-react";
+} from "@/components/ui/icons";
 import { useState, useEffect, useRef } from "react";
 import { useCartStore } from "@/stores/cart";
 

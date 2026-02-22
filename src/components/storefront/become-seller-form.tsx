@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
-import { Store, ArrowRight, Check } from "lucide-react";
+import { Store, ArrowRight, Check } from "@/components/ui/icons";
 
 export function BecomeSellerForm() {
   const router = useRouter();

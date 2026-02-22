@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { Check, Package, ArrowRight } from "lucide-react";
+import { Check, Package, ArrowRight } from "@/components/ui/icons";
 import { useCartStore } from "@/stores/cart";
 import { formatPrice } from "@/lib/utils";
 

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Heart } from "lucide-react";
+import { Heart } from "@/components/ui/icons";
 import { formatPrice } from "@/lib/utils";
 
 export type ProductCardData = {

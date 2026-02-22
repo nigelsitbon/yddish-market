@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useUser } from "@clerk/nextjs";
-import { ArrowLeft, Lock, ChevronDown } from "lucide-react";
+import { ArrowLeft, Lock, ChevronDown } from "@/components/ui/icons";
 import { useCartStore, type CartItem as CartItemType } from "@/stores/cart";
 import { formatPrice } from "@/lib/utils";
 import { calculateSellerShipping, COUNTRY_OPTIONS } from "@/lib/shipping";

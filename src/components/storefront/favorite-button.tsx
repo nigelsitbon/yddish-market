@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Heart } from "lucide-react";
+import { Heart } from "@/components/ui/icons";
 
 type FavoriteButtonProps = {
   productId: string;

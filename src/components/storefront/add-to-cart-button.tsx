@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useUser } from "@clerk/nextjs";
-import { ShoppingBag, Check } from "lucide-react";
+import { ShoppingBag, Check } from "@/components/ui/icons";
 import { useCartStore } from "@/stores/cart";
 
 type AddToCartButtonProps = {
