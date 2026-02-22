@@ -106,7 +106,7 @@ export function CartPageContent() {
           Découvrez notre sélection de produits Judaica d'exception.
         </p>
         <Link
-          href="/products"
+          href="/"
           className="inline-flex items-center gap-2 h-12 px-8 bg-foreground text-white text-[13px] tracking-wide hover:bg-foreground/90 transition-colors"
         >
           Explorer la boutique
@@ -146,7 +146,7 @@ export function CartPageContent() {
           ))}
 
           <Link
-            href="/products"
+            href="/"
             className="inline-flex items-center gap-2 text-[13px] text-muted-foreground hover:text-foreground transition-colors mt-6"
           >
             <ArrowLeft size={14} strokeWidth={1.5} />

@@ -16,12 +16,12 @@ import { useState, useEffect, useRef } from "react";
 import { useCartStore } from "@/stores/cart";
 
 const navigation = [
-  { name: "Nouveautés", href: "/products?sort=newest" },
-  { name: "Vêtements", href: "/products?category=vetements" },
-  { name: "Bijoux", href: "/products?category=bijoux" },
-  { name: "Art & Accessoires", href: "/products?category=art-accessoires" },
-  { name: "Livres", href: "/products?category=livres" },
-  { name: "Fêtes", href: "/products?category=fetes" },
+  { name: "Nouveautés", href: "/?sort=newest" },
+  { name: "Vêtements", href: "/?category=vetements" },
+  { name: "Bijoux", href: "/?category=bijoux" },
+  { name: "Art & Accessoires", href: "/?category=art-accessoires" },
+  { name: "Livres", href: "/?category=livres" },
+  { name: "Fêtes", href: "/?category=fetes" },
 ];
 
 type UserContext = {
@@ -47,7 +47,7 @@ export function Header() {
     e.preventDefault();
     const q = searchQuery.trim();
     if (!q) return;
-    router.push(`/products?q=${encodeURIComponent(q)}`);
+    router.push(`/?q=${encodeURIComponent(q)}`);
     setSearchOpen(false);
     setSearchQuery("");
   };
@@ -242,7 +242,7 @@ export function Header() {
               </Link>
             ))}
             <Link
-              href="/products?category=epicerie-fine"
+              href="/?category=epicerie-fine"
               className="text-[13px] tracking-wide text-sale hover:opacity-60 transition-opacity"
             >
               Épicerie Fine
@@ -266,7 +266,7 @@ export function Header() {
               </Link>
             ))}
             <Link
-              href="/products?category=epicerie-fine"
+              href="/?category=epicerie-fine"
               className="block py-2.5 text-[13px] tracking-wide text-sale"
               onClick={() => setMobileMenuOpen(false)}
             >

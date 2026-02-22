@@ -196,7 +196,7 @@ export function OrderConfirmationContent() {
       {/* Actions */}
       <div className="flex flex-col sm:flex-row gap-3">
         <Link
-          href="/products"
+          href="/"
           className="flex items-center justify-center gap-2 h-12 px-8 bg-foreground text-white text-[13px] tracking-wide hover:bg-foreground/90 transition-colors"
         >
           Continuer mes achats

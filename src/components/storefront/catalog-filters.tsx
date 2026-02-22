@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { useState, useCallback } from "react";
 import { SlidersHorizontal, X, ChevronDown } from "lucide-react";
 
@@ -33,6 +33,7 @@ const priceRanges = [
 export function CatalogFilters({ categories }: CatalogFiltersProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const pathname = usePathname();
   const [filtersOpen, setFiltersOpen] = useState(false);
 
   const activeCategory = searchParams.get("category") ?? "";
@@ -48,14 +49,14 @@ export function CatalogFilters({ categories }: CatalogFiltersProps) {
         params.delete(key);
       }
       if (key !== "page") params.delete("page");
-      router.push(`/products?${params.toString()}`);
+      router.push(`${pathname}?${params.toString()}`);
     },
-    [router, searchParams]
+    [router, searchParams, pathname]
   );
 
   const clearAll = useCallback(() => {
-    router.push("/products");
-  }, [router]);
+    router.push(pathname);
+  }, [router, pathname]);
 
   const hasFilters = activeCategory || activePrice;
 

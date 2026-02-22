@@ -13,11 +13,11 @@ const footerSections = [
   {
     title: "Categories",
     links: [
-      { name: "Objets rituels", href: "/products?category=objets-rituels" },
-      { name: "Bijoux", href: "/products?category=bijoux" },
-      { name: "Mezouzot", href: "/products?category=mezouzot" },
-      { name: "Art & Decoration", href: "/products?category=art-decoration" },
-      { name: "Mode", href: "/products?category=mode" },
+      { name: "Objets rituels", href: "/?category=objets-rituels" },
+      { name: "Bijoux", href: "/?category=bijoux" },
+      { name: "Mezouzot", href: "/?category=mezouzot" },
+      { name: "Art & Decoration", href: "/?category=art-decoration" },
+      { name: "Mode", href: "/?category=mode" },
     ],
   },
   {

@@ -237,7 +237,7 @@ export function CheckoutForm() {
           Ajoutez des articles avant de passer commande.
         </p>
         <Link
-          href="/products"
+          href="/"
           className="inline-flex items-center gap-2 h-12 px-8 bg-foreground text-white text-[13px] tracking-wide hover:bg-foreground/90 transition-colors"
         >
           Explorer la boutique
