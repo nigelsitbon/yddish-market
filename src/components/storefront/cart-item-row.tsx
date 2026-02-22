@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { X } from "@/components/ui/icons";
 import { QuantitySelector } from "@/components/storefront/quantity-selector";
 import { formatPrice } from "@/lib/utils";
@@ -21,12 +22,14 @@ export function CartItemRow({ item, onUpdateQuantity, onRemove, disabled }: Cart
     <div className="flex gap-4 sm:gap-6 py-6 border-b border-border">
       {/* Image */}
       <Link href={`/products/${item.product.slug}`} className="shrink-0">
-        <div className="w-[100px] h-[133px] sm:w-[120px] sm:h-[160px] bg-[#F5F5F0] flex items-center justify-center">
+        <div className="w-[100px] h-[133px] sm:w-[120px] sm:h-[160px] bg-[#F5F5F0] relative overflow-hidden flex items-center justify-center">
           {item.product.images[0] ? (
-            <img
+            <Image
               src={item.product.images[0]}
               alt={item.product.title}
-              className="w-full h-full object-cover"
+              fill
+              className="object-cover"
+              sizes="(max-width: 640px) 100px, 120px"
             />
           ) : (
             <span className="text-[10px] text-[#A09A90] tracking-widest uppercase">Image</span>

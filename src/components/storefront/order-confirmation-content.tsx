@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { Check, Package, ArrowRight } from "@/components/ui/icons";
 import { useCartStore } from "@/stores/cart";
 import { formatPrice } from "@/lib/utils";
@@ -119,12 +120,14 @@ export function OrderConfirmationContent() {
         <div className="space-y-3 mb-6">
           {order.items.map((item) => (
             <div key={item.id} className="flex items-start gap-3">
-              <div className="w-12 h-16 bg-[#F5F5F0] shrink-0 flex items-center justify-center">
+              <div className="w-12 h-16 bg-[#F5F5F0] shrink-0 relative overflow-hidden flex items-center justify-center">
                 {item.product.images[0] ? (
-                  <img
+                  <Image
                     src={item.product.images[0]}
                     alt=""
-                    className="w-full h-full object-cover"
+                    fill
+                    className="object-cover"
+                    sizes="48px"
                   />
                 ) : (
                   <span className="text-[7px] text-[#A09A90]">IMG</span>

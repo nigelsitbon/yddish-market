@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { useUser } from "@clerk/nextjs";
 import { ArrowLeft, Lock, ChevronDown } from "@/components/ui/icons";
 import { useCartStore, type CartItem as CartItemType } from "@/stores/cart";
@@ -505,12 +506,14 @@ export function CheckoutForm() {
                         const price = item.variant?.price ?? item.product.price;
                         return (
                           <div key={item.id} className="flex items-start gap-3">
-                            <div className="w-12 h-16 bg-[#F0F0ED] shrink-0 flex items-center justify-center">
+                            <div className="w-12 h-16 bg-[#F0F0ED] shrink-0 relative overflow-hidden flex items-center justify-center">
                               {item.product.images[0] ? (
-                                <img
+                                <Image
                                   src={item.product.images[0]}
                                   alt=""
-                                  className="w-full h-full object-cover"
+                                  fill
+                                  className="object-cover"
+                                  sizes="48px"
                                 />
                               ) : (
                                 <span className="text-[7px] text-[#A09A90]">IMG</span>

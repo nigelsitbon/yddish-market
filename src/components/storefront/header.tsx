@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useUser, SignInButton, UserButton } from "@clerk/nextjs";
 import {
@@ -117,10 +118,13 @@ export function Header() {
 
             {/* Center: Logo */}
             <Link href="/" className="absolute left-1/2 -translate-x-1/2">
-              <img
+              <Image
                 src="/logo.svg"
                 alt="YDDISH MARKET"
+                width={200}
+                height={34}
                 className="h-[28px] sm:h-[34px] w-auto"
+                priority
               />
             </Link>
 

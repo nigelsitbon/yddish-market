@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import {
   Package,
   ShoppingCart,
@@ -155,9 +156,9 @@ export function OverviewContent() {
                     href={`/dashboard/orders/${item.order.orderNumber}`}
                     className="flex items-center gap-3 px-5 py-3 hover:bg-muted/50 transition-colors"
                   >
-                    <div className="w-10 h-10 bg-[#F5F5F0] shrink-0 flex items-center justify-center">
+                    <div className="w-10 h-10 bg-[#F5F5F0] shrink-0 relative overflow-hidden flex items-center justify-center">
                       {item.product.images[0] ? (
-                        <img src={item.product.images[0]} alt="" className="w-full h-full object-cover" />
+                        <Image src={item.product.images[0]} alt="" fill className="object-cover" sizes="40px" />
                       ) : (
                         <Package size={14} className="text-muted-foreground" />
                       )}

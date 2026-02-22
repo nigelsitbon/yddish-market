@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
+import Image from "next/image";
 import { ShoppingCart, Package, Truck, Check, X as XIcon } from "@/components/ui/icons";
 import { formatPrice } from "@/lib/utils";
 import { Badge } from "@/components/ui";
@@ -155,9 +156,9 @@ export function OrdersList() {
                 <div key={item.id} className="p-5">
                   <div className="flex items-start gap-4">
                     {/* Product image */}
-                    <div className="w-14 h-14 bg-[#F5F5F0] shrink-0 flex items-center justify-center">
+                    <div className="w-14 h-14 bg-[#F5F5F0] shrink-0 relative overflow-hidden flex items-center justify-center">
                       {item.product.images[0] ? (
-                        <img src={item.product.images[0]} alt="" className="w-full h-full object-cover" />
+                        <Image src={item.product.images[0]} alt="" fill className="object-cover" sizes="56px" />
                       ) : (
                         <Package size={18} className="text-muted-foreground" />
                       )}

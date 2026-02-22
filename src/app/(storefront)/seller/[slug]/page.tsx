@@ -2,17 +2,65 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { ProductCard, type ProductCardData } from "@/components/storefront/product-card";
-import { Star } from "lucide-react";
+import { Star } from "@/components/ui/icons";
+import { unstable_cache } from "next/cache";
 
-// ISR: revalidate every 60s
-export const revalidate = 60;
+// ISR: revalidate every 300s — seller data cached on CDN
+export const revalidate = 300;
+
+/* ── Cached data fetching ── */
+
+const getSellerBySlug = unstable_cache(
+  async (slug: string) => {
+    return prisma.sellerProfile.findUnique({
+      where: { slug },
+      select: {
+        id: true,
+        shopName: true,
+        slug: true,
+        description: true,
+        logo: true,
+        banner: true,
+        verified: true,
+        rating: true,
+        totalSales: true,
+      },
+    });
+  },
+  ["seller-profile"],
+  { revalidate: 300, tags: ["sellers"] }
+);
+
+const getSellerProducts = unstable_cache(
+  async (sellerId: string) => {
+    const rawProducts = await prisma.product.findMany({
+      where: { sellerId, status: "ACTIVE" },
+      select: {
+        slug: true,
+        title: true,
+        price: true,
+        comparePrice: true,
+        images: true,
+        seller: { select: { shopName: true, slug: true, verified: true } },
+        categories: { select: { category: { select: { name: true, slug: true } } } },
+      },
+      orderBy: { createdAt: "desc" },
+      take: 24,
+    });
+    return rawProducts.map((p) => ({
+      ...p,
+      categories: p.categories.map((pc) => pc.category),
+    }));
+  },
+  ["seller-products"],
+  { revalidate: 300, tags: ["products", "sellers"] }
+);
+
+/* ── Metadata ── */
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const seller = await prisma.sellerProfile.findUnique({
-    where: { slug },
-    select: { shopName: true, description: true },
-  });
+  const seller = await getSellerBySlug(slug);
   if (!seller) return { title: "Vendeur introuvable" };
   return {
     title: seller.shopName,
@@ -44,44 +92,11 @@ export default async function SellerPage({
 }) {
   const { slug } = await params;
 
-  const seller = await prisma.sellerProfile.findUnique({
-    where: { slug },
-    select: {
-      id: true,
-      shopName: true,
-      slug: true,
-      description: true,
-      logo: true,
-      banner: true,
-      verified: true,
-      rating: true,
-      totalSales: true,
-    },
-  });
+  const seller = await getSellerBySlug(slug);
 
   if (!seller) notFound();
 
-  const rawProducts = await prisma.product.findMany({
-    where: {
-      sellerId: seller.id,
-      status: "ACTIVE",
-    },
-    select: {
-      slug: true,
-      title: true,
-      price: true,
-      comparePrice: true,
-      images: true,
-      seller: { select: { shopName: true, slug: true, verified: true } },
-      categories: { select: { category: { select: { name: true, slug: true } } } },
-    },
-    orderBy: { createdAt: "desc" },
-    take: 24,
-  });
-  const products: ProductCardData[] = rawProducts.map((p) => ({
-    ...p,
-    categories: p.categories.map((pc) => pc.category),
-  }));
+  const products: ProductCardData[] = await getSellerProducts(seller.id);
 
   return (
     <div>

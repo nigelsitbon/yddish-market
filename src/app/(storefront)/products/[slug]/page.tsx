@@ -7,16 +7,74 @@ import { FavoriteButton } from "@/components/storefront/favorite-button";
 import { ProductCard } from "@/components/storefront/product-card";
 import { formatPrice } from "@/lib/utils";
 import { Star, Package, Truck, Check } from "@/components/ui/icons";
+import { unstable_cache } from "next/cache";
 
-// ISR: revalidate every 60s — product data cached on CDN
-export const revalidate = 60;
+// ISR: revalidate every 300s — product data cached on CDN
+export const revalidate = 300;
+
+/* ── Cached data fetching ── */
+
+const getProductMeta = unstable_cache(
+  async (slug: string) => {
+    return prisma.product.findUnique({
+      where: { slug },
+      select: { title: true, description: true },
+    });
+  },
+  ["product-meta"],
+  { revalidate: 300, tags: ["products"] }
+);
+
+const getProduct = unstable_cache(
+  async (slug: string) => {
+    return prisma.product.findUnique({
+      where: { slug, status: "ACTIVE" },
+      include: {
+        seller: true,
+        categories: { include: { category: true } },
+        variants: true,
+        reviews: {
+          include: { user: { select: { name: true } } },
+          orderBy: { createdAt: "desc" },
+          take: 10,
+        },
+        _count: { select: { reviews: true, favorites: true } },
+      },
+    });
+  },
+  ["product-detail"],
+  { revalidate: 300, tags: ["products"] }
+);
+
+const getRelatedProducts = unstable_cache(
+  async (categoryIds: string[], excludeProductId: string) => {
+    return prisma.product.findMany({
+      where: {
+        categories: { some: { categoryId: { in: categoryIds } } },
+        id: { not: excludeProductId },
+        status: "ACTIVE",
+      },
+      select: {
+        slug: true,
+        title: true,
+        price: true,
+        comparePrice: true,
+        images: true,
+        seller: { select: { shopName: true, slug: true } },
+      },
+      take: 4,
+      orderBy: { createdAt: "desc" },
+    });
+  },
+  ["related-products"],
+  { revalidate: 300, tags: ["products"] }
+);
+
+/* ── Metadata ── */
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const product = await prisma.product.findUnique({
-    where: { slug },
-    select: { title: true, description: true },
-  });
+  const product = await getProductMeta(slug);
 
   if (!product) return { title: "Produit introuvable" };
 
@@ -44,20 +102,7 @@ function Stars({ rating, size = 14 }: { rating: number; size?: number }) {
 export default async function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
 
-  const product = await prisma.product.findUnique({
-    where: { slug, status: "ACTIVE" },
-    include: {
-      seller: true,
-      categories: { include: { category: true } },
-      variants: true,
-      reviews: {
-        include: { user: { select: { name: true } } },
-        orderBy: { createdAt: "desc" },
-        take: 10,
-      },
-      _count: { select: { reviews: true, favorites: true } },
-    },
-  });
+  const product = await getProduct(slug);
 
   if (!product) notFound();
 
@@ -72,23 +117,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
   const productCatIds = product.categories.map((pc) => pc.category.id);
 
   // Fetch related products (share any category, different product)
-  const relatedProducts = await prisma.product.findMany({
-    where: {
-      categories: { some: { categoryId: { in: productCatIds } } },
-      id: { not: product.id },
-      status: "ACTIVE",
-    },
-    select: {
-      slug: true,
-      title: true,
-      price: true,
-      comparePrice: true,
-      images: true,
-      seller: { select: { shopName: true, slug: true } },
-    },
-    take: 4,
-    orderBy: { createdAt: "desc" },
-  });
+  const relatedProducts = await getRelatedProducts(productCatIds, product.id);
 
   return (
     <div>

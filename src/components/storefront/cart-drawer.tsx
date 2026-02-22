@@ -2,6 +2,7 @@
 
 import { useEffect, useCallback } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useUser } from "@clerk/nextjs";
 import { X, ShoppingBag, ArrowRight } from "@/components/ui/icons";
 import { useCartStore } from "@/stores/cart";
@@ -137,12 +138,14 @@ export function CartDrawer() {
                       onClick={() => setOpen(false)}
                       className="shrink-0"
                     >
-                      <div className="w-[72px] h-[96px] bg-[#F5F5F0] flex items-center justify-center">
+                      <div className="w-[72px] h-[96px] bg-[#F5F5F0] relative overflow-hidden flex items-center justify-center">
                         {item.product.images[0] ? (
-                          <img
+                          <Image
                             src={item.product.images[0]}
                             alt={item.product.title}
-                            className="w-full h-full object-cover"
+                            fill
+                            className="object-cover"
+                            sizes="72px"
                           />
                         ) : (
                           <span className="text-[8px] text-[#A09A90] tracking-widest uppercase">

@@ -4,9 +4,10 @@ import { prisma } from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
 import { ProductCard, type ProductCardData } from "@/components/storefront/product-card";
 import { CatalogFilters } from "@/components/storefront/catalog-filters";
+import { unstable_cache } from "next/cache";
 
-// ISR: revalidate every 60s
-export const revalidate = 60;
+// ISR: revalidate every 300s — products change rarely
+export const revalidate = 300;
 
 export const metadata = {
   title: "Tous les produits",
@@ -14,29 +15,32 @@ export const metadata = {
     "Explorez notre collection d'objets Judaica : objets rituels, bijoux, mezouzot, art et décoration, mode, livres et alimentaire casher.",
 };
 
-/* ── Data fetching ── */
+/* ── Cached data fetching ── */
 
-async function getCategories() {
-  const categories = await prisma.category.findMany({
-    where: { parentId: null },
-    include: {
-      children: {
-        orderBy: { order: "asc" },
-        select: { id: true, name: true, slug: true },
+const getCategories = unstable_cache(
+  async () => {
+    return prisma.category.findMany({
+      where: { parentId: null },
+      include: {
+        children: {
+          orderBy: { order: "asc" },
+          select: { id: true, name: true, slug: true },
+        },
       },
-    },
-    orderBy: { order: "asc" },
-  });
-  return categories;
-}
+      orderBy: { order: "asc" },
+    });
+  },
+  ["storefront-categories"],
+  { revalidate: 300, tags: ["categories"] }
+);
 
-async function getProducts(params: {
+const getProducts = unstable_cache(async (params: {
   category?: string;
   sort?: string;
   price?: string;
   page?: number;
   q?: string;
-}): Promise<{ products: ProductCardData[]; total: number }> {
+}): Promise<{ products: ProductCardData[]; total: number }> => {
   const { category, sort = "newest", price, page = 1, q } = params;
   const limit = 24;
 
@@ -121,7 +125,10 @@ async function getProducts(params: {
     })),
     total,
   };
-}
+  },
+  ["storefront-products"],
+  { revalidate: 300, tags: ["products"] }
+);
 
 /* ── Sub-components ── */
 

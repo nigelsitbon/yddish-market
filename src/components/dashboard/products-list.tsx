@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { Plus, Search, Package, MoreHorizontal, Eye, Edit, Archive } from "lucide-react";
 import { formatPrice } from "@/lib/utils";
 import { Badge } from "@/components/ui";
@@ -173,9 +174,9 @@ export function ProductsList() {
                   >
                     {/* Product */}
                     <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 bg-[#F5F5F0] shrink-0 flex items-center justify-center">
+                      <div className="w-12 h-12 bg-[#F5F5F0] shrink-0 relative overflow-hidden flex items-center justify-center">
                         {product.images[0] ? (
-                          <img src={product.images[0]} alt="" className="w-full h-full object-cover" />
+                          <Image src={product.images[0]} alt="" fill className="object-cover" sizes="48px" />
                         ) : (
                           <Package size={16} className="text-muted-foreground" />
                         )}
