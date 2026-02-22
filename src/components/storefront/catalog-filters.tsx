@@ -227,7 +227,7 @@ export function CatalogFilters({ categories }: CatalogFiltersProps) {
               onClick={() => updateParams("category", cat.slug === activeCategory ? "" : cat.slug)}
               className={`whitespace-nowrap px-4 py-1.5 text-[12px] border transition-colors ${
                 activeCategory === cat.slug
-                  ? "border-foreground text-foreground bg-foreground text-white"
+                  ? "border-foreground bg-foreground text-[#FFFFFF]"
                   : "border-border text-foreground hover:border-foreground"
               }`}
             >

@@ -216,7 +216,7 @@ export function CartDrawer() {
               <Link
                 href="/checkout"
                 onClick={() => setOpen(false)}
-                className="flex items-center justify-center gap-2 w-full h-12 bg-foreground text-white text-[13px] tracking-wide font-medium hover:bg-foreground/90 transition-colors"
+                className="flex items-center justify-center gap-2 w-full h-13 bg-accent text-[#FFFFFF] text-[14px] tracking-wide font-semibold hover:bg-accent/90 transition-colors shadow-md"
               >
                 Passer commande
                 <ArrowRight size={16} strokeWidth={1.5} />
