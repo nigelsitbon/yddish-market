@@ -4,7 +4,6 @@ import { Footer } from "@/components/storefront/footer";
 
 const CartDrawer = dynamic(
   () => import("@/components/storefront/cart-drawer").then((m) => m.CartDrawer),
-  { ssr: false }
 );
 
 export default function StorefrontLayout({
