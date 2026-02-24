@@ -100,7 +100,7 @@ export function ProductsList() {
         </div>
         <Link
           href="/dashboard/products/new"
-          className="flex items-center gap-2 h-11 px-6 bg-accent text-[#FFFFFF] text-[13px] font-medium tracking-wide hover:bg-accent/90 transition-colors shadow-sm"
+          className="flex items-center gap-2 h-11 px-6 btn-gradient-accent text-[#FFFFFF] text-[13px] font-medium tracking-wide rounded-xl hover:shadow-md transition-all shadow-sm"
         >
           <Plus size={16} strokeWidth={2} />
           Nouveau produit
@@ -116,7 +116,7 @@ export function ProductsList() {
             placeholder="Rechercher un produit..."
             value={search}
             onChange={(e) => handleSearchChange(e.target.value)}
-            className="w-full h-10 pl-9 pr-3 text-[13px] border border-border bg-white focus:border-foreground focus:outline-none transition-colors"
+            className="w-full h-10 pl-9 pr-3 text-[13px] border border-border bg-white rounded-xl focus:border-accent/50 focus:ring-2 focus:ring-accent/20 focus:outline-none transition-all"
           />
         </div>
         <div className="flex gap-1">
@@ -125,10 +125,10 @@ export function ProductsList() {
               key={s}
               type="button"
               onClick={() => { setStatusFilter(s); setPage(1); }}
-              className={`h-10 px-3 text-[11px] tracking-wide border transition-colors ${
+              className={`h-10 px-3 text-[11px] tracking-wide border rounded-full transition-all ${
                 statusFilter === s
                   ? "border-foreground bg-foreground text-[#FFFFFF]"
-                  : "border-border bg-white text-muted-foreground hover:text-foreground"
+                  : "border-border bg-white text-muted-foreground hover:text-foreground hover:border-foreground/30"
               }`}
             >
               {s === "all" ? "Tous" : statusConfig[s]?.label || s}
@@ -138,7 +138,7 @@ export function ProductsList() {
       </div>
 
       {/* Products table */}
-      <div className="bg-white border border-border">
+      <div className="bg-white border border-border/60 rounded-2xl overflow-hidden">
         {loading ? (
           <div className="p-8 space-y-4">
             {[...Array(5)].map((_, i) => (
@@ -156,7 +156,7 @@ export function ProductsList() {
             {!search && statusFilter === "all" && (
               <Link
                 href="/dashboard/products/new"
-                className="inline-flex items-center gap-2 h-11 px-8 bg-accent text-[#FFFFFF] text-[13px] font-medium tracking-wide hover:bg-accent/90 transition-colors shadow-sm"
+                className="inline-flex items-center gap-2 h-11 px-8 btn-gradient-accent text-[#FFFFFF] text-[13px] font-medium tracking-wide rounded-xl hover:shadow-md transition-all shadow-sm"
               >
                 <Plus size={16} strokeWidth={2} />
                 Créer mon premier produit
@@ -189,7 +189,7 @@ export function ProductsList() {
                   >
                     {/* Product */}
                     <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 bg-[#F5F5F0] shrink-0 relative overflow-hidden flex items-center justify-center">
+                      <div className="w-12 h-12 bg-[#F5F5F0] rounded-lg shrink-0 relative overflow-hidden flex items-center justify-center">
                         {product.images[0] ? (
                           <Image src={product.images[0]} alt="" fill className="object-cover" sizes="48px" />
                         ) : (
@@ -243,7 +243,7 @@ export function ProductsList() {
                       {menuOpen === product.id && (
                         <>
                           <div className="fixed inset-0 z-10" onClick={() => setMenuOpen(null)} />
-                          <div className="absolute right-0 top-8 z-20 bg-white border border-border shadow-lg py-1 w-[160px]">
+                          <div className="absolute right-0 top-8 z-20 bg-white border border-border/60 rounded-xl shadow-lg py-1 w-[160px] overflow-hidden">
                             <Link
                               href={`/products/${product.slug}`}
                               onClick={() => setMenuOpen(null)}

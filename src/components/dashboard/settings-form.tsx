@@ -133,7 +133,7 @@ export function SettingsForm() {
       </div>
 
       {/* Shop info */}
-      <div className="bg-white border border-border p-5 space-y-4">
+      <div className="bg-white border border-border/60 rounded-2xl p-5 space-y-4">
         <h2 className="text-[13px] font-medium tracking-wide uppercase text-foreground">
           Ma boutique
         </h2>
@@ -146,7 +146,7 @@ export function SettingsForm() {
             type="text"
             value={shopName}
             onChange={(e) => setShopName(e.target.value)}
-            className="w-full h-11 px-3 text-[13px] border border-border bg-white focus:border-foreground focus:outline-none transition-colors"
+            className="w-full h-11 px-3 text-[13px] border border-border bg-white rounded-xl focus:border-accent/50 focus:ring-2 focus:ring-accent/20 focus:outline-none transition-all"
           />
         </div>
 
@@ -159,7 +159,7 @@ export function SettingsForm() {
             onChange={(e) => setDescription(e.target.value)}
             rows={4}
             maxLength={1000}
-            className="w-full px-3 py-2.5 text-[13px] border border-border bg-white focus:border-foreground focus:outline-none transition-colors resize-none"
+            className="w-full px-3 py-2.5 text-[13px] border border-border bg-white rounded-xl focus:border-accent/50 focus:ring-2 focus:ring-accent/20 focus:outline-none transition-all resize-none"
           />
           <p className="text-[11px] text-muted-foreground mt-1">
             {description.length}/1000 caractères
@@ -171,14 +171,14 @@ export function SettingsForm() {
             URL de votre boutique
           </label>
           <div className="flex items-center gap-2">
-            <code className="flex-1 h-11 flex items-center px-3 text-[12px] bg-muted border border-border text-muted-foreground">
+            <code className="flex-1 h-11 flex items-center px-3 text-[12px] bg-muted border border-border rounded-xl text-muted-foreground">
               yddishmarket.com/seller/{profile?.slug}
             </code>
             <a
               href={`/seller/${profile?.slug}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="h-11 px-3 flex items-center gap-1 border border-border text-[11px] text-foreground hover:bg-muted transition-colors"
+              className="h-11 px-3 flex items-center gap-1 border border-border rounded-xl text-[11px] text-foreground hover:bg-muted transition-all"
             >
               <ExternalLink size={14} /> Voir
             </a>
@@ -186,13 +186,13 @@ export function SettingsForm() {
         </div>
 
         {error && (
-          <div className="p-3 bg-red-50 border border-red-200 text-[12px] text-red-700">
+          <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-[12px] text-red-700">
             {error}
           </div>
         )}
 
         {success && (
-          <div className="p-3 bg-green-50 border border-green-200 text-[12px] text-green-700">
+          <div className="p-3 bg-green-50 border border-green-200 rounded-xl text-[12px] text-green-700">
             Modifications enregistrées
           </div>
         )}
@@ -201,7 +201,7 @@ export function SettingsForm() {
           type="button"
           onClick={handleSave}
           disabled={saving || !shopName.trim()}
-          className="flex items-center gap-2 h-11 px-6 bg-foreground text-[#FFFFFF] text-[12px] tracking-wide hover:bg-foreground/90 transition-colors disabled:opacity-50"
+          className="flex items-center gap-2 h-11 px-6 btn-gradient-dark text-[#FFFFFF] text-[12px] tracking-wide rounded-xl shadow-sm hover:shadow-md transition-all disabled:opacity-50"
         >
           {saving ? (
             <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -215,7 +215,7 @@ export function SettingsForm() {
       </div>
 
       {/* Stats */}
-      <div className="bg-white border border-border p-5 space-y-4">
+      <div className="bg-white border border-border/60 rounded-2xl p-5 space-y-4">
         <h2 className="text-[13px] font-medium tracking-wide uppercase text-foreground">
           Informations
         </h2>
@@ -242,13 +242,13 @@ export function SettingsForm() {
       </div>
 
       {/* Stripe Connect */}
-      <div className="bg-white border border-border p-5 space-y-4">
+      <div className="bg-white border border-border/60 rounded-2xl p-5 space-y-4">
         <h2 className="text-[13px] font-medium tracking-wide uppercase text-foreground flex items-center gap-2">
           <CreditCard size={15} /> Paiements — Stripe Connect
         </h2>
 
         {stripeMessage && (
-          <div className={`p-3 text-[12px] border ${
+          <div className={`p-3 text-[12px] border rounded-xl ${
             profile?.stripeOnboarded
               ? "bg-green-50 border-green-200 text-green-700"
               : "bg-blue-50 border-blue-200 text-blue-700"
@@ -272,7 +272,7 @@ export function SettingsForm() {
               type="button"
               onClick={handleStripeConnect}
               disabled={stripeLoading}
-              className="flex items-center gap-2 h-11 px-5 bg-[#635bff] text-[#FFFFFF] text-[12px] tracking-wide hover:bg-[#5249d9] transition-colors disabled:opacity-50"
+              className="flex items-center gap-2 h-11 px-5 bg-[#635bff] text-[#FFFFFF] text-[12px] tracking-wide rounded-xl shadow-sm hover:bg-[#5249d9] hover:shadow-md transition-all disabled:opacity-50"
             >
               {stripeLoading ? (
                 <>

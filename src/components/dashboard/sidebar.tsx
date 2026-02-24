@@ -51,7 +51,7 @@ export function Sidebar() {
             <Link
               key={item.href}
               href={item.href}
-              className={`flex items-center gap-3 px-3 h-10 text-[13px] transition-colors ${
+              className={`flex items-center gap-3 px-3 h-10 text-[13px] rounded-lg transition-colors ${
                 active
                   ? "bg-muted text-foreground font-medium"
                   : "text-muted-foreground hover:text-foreground hover:bg-muted/50"

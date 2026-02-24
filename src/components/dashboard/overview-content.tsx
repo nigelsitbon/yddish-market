@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { formatPrice } from "@/lib/utils";
 import { Badge } from "@/components/ui";
+import { OnboardingChecklist } from "./onboarding-checklist";
 
 type Stats = {
   totalProducts: number;
@@ -67,13 +68,13 @@ export function OverviewContent() {
   if (loading) {
     return (
       <div className="space-y-6">
-        <div className="h-8 w-48 bg-white animate-pulse" />
+        <div className="h-8 w-48 bg-white rounded-xl animate-pulse" />
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           {[...Array(4)].map((_, i) => (
-            <div key={i} className="h-[100px] bg-white animate-pulse" />
+            <div key={i} className="h-[100px] bg-white rounded-2xl animate-pulse" />
           ))}
         </div>
-        <div className="h-[300px] bg-white animate-pulse" />
+        <div className="h-[300px] bg-white rounded-2xl animate-pulse" />
       </div>
     );
   }
@@ -90,12 +91,15 @@ export function OverviewContent() {
         </div>
         <Link
           href="/dashboard/products/new"
-          className="flex items-center gap-2 h-10 px-4 bg-foreground text-[#FFFFFF] text-[12px] tracking-wide hover:bg-foreground/90 transition-colors"
+          className="flex items-center gap-2 h-10 px-5 btn-gradient-dark text-[#FFFFFF] text-[12px] tracking-wide rounded-xl shadow-sm hover:shadow-md transition-all"
         >
           <Plus size={14} strokeWidth={1.5} />
           Nouveau produit
         </Link>
       </div>
+
+      {/* Onboarding checklist */}
+      <OnboardingChecklist />
 
       {/* Stats cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
@@ -126,8 +130,8 @@ export function OverviewContent() {
       {/* Quick actions + Recent orders */}
       <div className="grid lg:grid-cols-[1fr_1fr] gap-6">
         {/* Recent orders */}
-        <div className="bg-white border border-border">
-          <div className="flex items-center justify-between px-5 py-4 border-b border-border">
+        <div className="bg-white border border-border/60 rounded-2xl overflow-hidden">
+          <div className="flex items-center justify-between px-5 py-4 border-b border-border/50">
             <h2 className="text-[13px] font-medium tracking-wide uppercase text-foreground">
               Dernières commandes
             </h2>
@@ -156,7 +160,7 @@ export function OverviewContent() {
                     href={`/dashboard/orders/${item.order.orderNumber}`}
                     className="flex items-center gap-3 px-5 py-3 hover:bg-muted/50 transition-colors"
                   >
-                    <div className="w-10 h-10 bg-[#F5F5F0] shrink-0 relative overflow-hidden flex items-center justify-center">
+                    <div className="w-10 h-10 bg-[#F5F5F0] rounded-lg shrink-0 relative overflow-hidden flex items-center justify-center">
                       {item.product.images[0] ? (
                         <Image src={item.product.images[0]} alt="" fill className="object-cover" sizes="40px" />
                       ) : (
@@ -186,7 +190,7 @@ export function OverviewContent() {
 
         {/* Quick actions */}
         <div className="space-y-4">
-          <div className="bg-white border border-border p-5">
+          <div className="bg-white border border-border/60 rounded-2xl p-5">
             <h2 className="text-[13px] font-medium tracking-wide uppercase text-foreground mb-4">
               Actions rapides
             </h2>
@@ -213,7 +217,7 @@ export function OverviewContent() {
           </div>
 
           {/* Tips */}
-          <div className="bg-accent-soft border border-accent/20 p-5">
+          <div className="bg-accent-soft border border-accent/20 rounded-2xl p-5">
             <h3 className="text-[12px] font-medium text-foreground mb-2">
               Conseil
             </h3>
@@ -239,7 +243,7 @@ function StatCard({
   accent?: string;
 }) {
   return (
-    <div className="bg-white border border-border p-5">
+    <div className="bg-white border border-border/60 rounded-2xl p-5">
       <div className="flex items-center gap-2 text-muted-foreground mb-3">
         {icon}
         <span className="text-[11px] tracking-wide uppercase">{label}</span>
@@ -266,7 +270,7 @@ function QuickAction({
   return (
     <Link
       href={href}
-      className="flex items-center gap-3 px-3 py-2.5 border border-border hover:border-foreground/30 transition-colors"
+      className="flex items-center gap-3 px-3 py-2.5 border border-border/60 rounded-xl hover:border-foreground/30 transition-all"
     >
       <div className="text-muted-foreground">{icon}</div>
       <div className="flex-1 min-w-0">
