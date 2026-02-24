@@ -9,7 +9,7 @@ const ENHANCE_PROMPT = `Transform this product photo into a professional e-comme
 Place the product on a clean, pure white studio background.
 Add soft, professional studio lighting with subtle natural shadows.
 Keep the product exactly as it is — same angle, same details, same colors.
-Only change the background to a premium white/light gray gradient studio setting.
+Only change the background to a premium white studio setting.
 The result should look like a high-end luxury marketplace product photo.`;
 
 export async function POST(req: Request) {
@@ -41,97 +41,35 @@ export async function POST(req: Request) {
       );
     }
 
-    const imageBuffer = Buffer.from(await imageResponse.arrayBuffer());
+    const imageArrayBuffer = await imageResponse.arrayBuffer();
     const contentType = imageResponse.headers.get("content-type") || "image/png";
 
-    // Determine file extension
+    // Determine file extension for the upload
     let ext = "png";
     if (contentType.includes("jpeg") || contentType.includes("jpg")) ext = "jpg";
     else if (contentType.includes("webp")) ext = "webp";
 
-    // 2. Convert to base64 for the API
-    const base64Image = imageBuffer.toString("base64");
+    // 2. Try gpt-image-1 (best quality, no mask needed)
+    let result = await tryGptImage1(apiKey, imageArrayBuffer, contentType, ext);
 
-    // 3. Call OpenAI Images Edit API (gpt-image-1)
-    // Using the chat completions approach with image input for better results
-    const openaiResponse = await fetch("https://api.openai.com/v1/responses", {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${apiKey}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: "gpt-4o",
-        input: [
-          {
-            role: "user",
-            content: [
-              {
-                type: "input_image",
-                image_url: `data:${contentType};base64,${base64Image}`,
-              },
-              {
-                type: "input_text",
-                text: ENHANCE_PROMPT,
-              },
-            ],
-          },
-        ],
-        tools: [
-          {
-            type: "image_generation",
-            quality: "high",
-            size: "1024x1024",
-          },
-        ],
-      }),
-    });
-
-    if (!openaiResponse.ok) {
-      const errorText = await openaiResponse.text();
-      console.error("[ENHANCE_OPENAI_ERROR]", openaiResponse.status, errorText);
-
-      // Fallback: try the simpler images/edits endpoint
-      return await fallbackEnhance(apiKey, imageBuffer, ext, user.sellerProfile.id, contentType);
+    // 3. Fallback: try DALL-E 2 if gpt-image-1 fails
+    if (!result) {
+      result = await tryDallE2(apiKey, imageArrayBuffer, contentType, ext);
     }
 
-    const openaiData = await openaiResponse.json();
-
-    // Extract the generated image from the response
-    let enhancedBase64: string | null = null;
-
-    // Navigate the response structure to find the generated image
-    if (openaiData.output) {
-      for (const item of openaiData.output) {
-        if (item.type === "image_generation_call" && item.result) {
-          enhancedBase64 = item.result;
-          break;
-        }
-        // Also check content array items
-        if (item.content) {
-          for (const content of item.content) {
-            if (content.type === "image" && content.image_url) {
-              // It's a data URL or base64
-              const match = content.image_url.match(/base64,(.+)/);
-              if (match) enhancedBase64 = match[1];
-            }
-          }
-        }
-      }
-    }
-
-    if (!enhancedBase64) {
-      // Fallback if response format didn't match
-      return await fallbackEnhance(apiKey, imageBuffer, ext, user.sellerProfile.id, contentType);
+    if (!result) {
+      return NextResponse.json(
+        { success: false, error: "L'amélioration n'a pas pu être effectuée. Réessayez." },
+        { status: 500 }
+      );
     }
 
     // 4. Upload enhanced image to Supabase
-    const enhancedBuffer = Buffer.from(enhancedBase64, "base64");
     const filePath = `sellers/${user.sellerProfile.id}/${randomUUID()}_enhanced.png`;
 
     const { error: uploadError } = await supabaseAdmin.storage
       .from(BUCKET)
-      .upload(filePath, enhancedBuffer, {
+      .upload(filePath, result, {
         contentType: "image/png",
         upsert: false,
       });
@@ -160,19 +98,74 @@ export async function POST(req: Request) {
 }
 
 /**
- * Fallback: use the simpler images/edits endpoint (DALL-E)
+ * Method 1: gpt-image-1 via /v1/images/edits (best — no mask required)
  */
-async function fallbackEnhance(
+async function tryGptImage1(
   apiKey: string,
-  imageBuffer: Buffer,
-  ext: string,
-  sellerId: string,
-  contentType: string
-) {
+  imageArrayBuffer: ArrayBuffer,
+  contentType: string,
+  ext: string
+): Promise<Buffer | null> {
   try {
     const formData = new FormData();
-    const blob = new Blob([imageBuffer as unknown as BlobPart], { type: contentType });
-    formData.append("image", blob, `product.${ext}`);
+    const imageBlob = new Blob([imageArrayBuffer], { type: contentType });
+    formData.append("image", imageBlob, `product.${ext}`);
+    formData.append("prompt", ENHANCE_PROMPT);
+    formData.append("model", "gpt-image-1");
+    formData.append("quality", "high");
+    formData.append("size", "1024x1024");
+
+    const response = await fetch("https://api.openai.com/v1/images/edits", {
+      method: "POST",
+      headers: { "Authorization": `Bearer ${apiKey}` },
+      body: formData,
+    });
+
+    if (!response.ok) {
+      const errText = await response.text();
+      console.error("[ENHANCE_GPT_IMAGE_1]", response.status, errText);
+      return null;
+    }
+
+    const data = await response.json();
+
+    // gpt-image-1 returns b64_json by default
+    const b64 = data.data?.[0]?.b64_json;
+    if (b64) {
+      return Buffer.from(b64, "base64");
+    }
+
+    // Or it might return a URL
+    const url = data.data?.[0]?.url;
+    if (url) {
+      const imgRes = await fetch(url);
+      if (imgRes.ok) {
+        return Buffer.from(await imgRes.arrayBuffer());
+      }
+    }
+
+    return null;
+  } catch (error) {
+    console.error("[ENHANCE_GPT_IMAGE_1_ERROR]", error);
+    return null;
+  }
+}
+
+/**
+ * Method 2: DALL-E 2 via /v1/images/edits (fallback)
+ * Note: DALL-E 2 works best with PNG images ≤4MB
+ */
+async function tryDallE2(
+  apiKey: string,
+  imageArrayBuffer: ArrayBuffer,
+  contentType: string,
+  ext: string
+): Promise<Buffer | null> {
+  try {
+    const formData = new FormData();
+    // DALL-E 2 prefers PNG
+    const imageBlob = new Blob([imageArrayBuffer], { type: contentType });
+    formData.append("image", imageBlob, `product.${ext}`);
     formData.append("prompt", ENHANCE_PROMPT);
     formData.append("model", "dall-e-2");
     formData.append("n", "1");
@@ -181,62 +174,26 @@ async function fallbackEnhance(
 
     const response = await fetch("https://api.openai.com/v1/images/edits", {
       method: "POST",
-      headers: {
-        "Authorization": `Bearer ${apiKey}`,
-      },
+      headers: { "Authorization": `Bearer ${apiKey}` },
       body: formData,
     });
 
     if (!response.ok) {
       const errText = await response.text();
-      console.error("[ENHANCE_FALLBACK_ERROR]", response.status, errText);
-      return NextResponse.json(
-        { success: false, error: "L'amélioration IA n'a pas pu être effectuée. Réessayez." },
-        { status: 500 }
-      );
+      console.error("[ENHANCE_DALLE2]", response.status, errText);
+      return null;
     }
 
     const data = await response.json();
     const b64 = data.data?.[0]?.b64_json;
 
-    if (!b64) {
-      return NextResponse.json(
-        { success: false, error: "Aucune image générée" },
-        { status: 500 }
-      );
+    if (b64) {
+      return Buffer.from(b64, "base64");
     }
 
-    const enhancedBuffer = Buffer.from(b64, "base64");
-    const filePath = `sellers/${sellerId}/${randomUUID()}_enhanced.png`;
-
-    const { error: uploadError } = await supabaseAdmin.storage
-      .from(BUCKET)
-      .upload(filePath, enhancedBuffer, {
-        contentType: "image/png",
-        upsert: false,
-      });
-
-    if (uploadError) {
-      console.error("[ENHANCE_FALLBACK_UPLOAD]", uploadError);
-      return NextResponse.json(
-        { success: false, error: "Erreur lors de la sauvegarde" },
-        { status: 500 }
-      );
-    }
-
-    const { data: urlData } = supabaseAdmin.storage
-      .from(BUCKET)
-      .getPublicUrl(filePath);
-
-    return NextResponse.json({
-      success: true,
-      data: { url: urlData.publicUrl },
-    });
+    return null;
   } catch (error) {
-    console.error("[ENHANCE_FALLBACK]", error);
-    return NextResponse.json(
-      { success: false, error: "Erreur lors de l'amélioration" },
-      { status: 500 }
-    );
+    console.error("[ENHANCE_DALLE2_ERROR]", error);
+    return null;
   }
 }
