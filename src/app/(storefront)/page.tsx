@@ -5,6 +5,7 @@ import { Prisma } from "@prisma/client";
 import { ProductCard, type ProductCardData } from "@/components/storefront/product-card";
 import { CatalogFilters } from "@/components/storefront/catalog-filters";
 import { unstable_cache } from "next/cache";
+import { OrganizationJsonLd, WebSiteJsonLd } from "@/components/seo/json-ld";
 
 // ISR: rebuild page in background every 300s — products change rarely
 export const revalidate = 300;
@@ -167,6 +168,10 @@ export default async function HomePage({
 
   return (
     <div className="mx-auto max-w-[1440px] px-4 sm:px-8 lg:px-12">
+      {/* SEO: Structured Data */}
+      <OrganizationJsonLd />
+      <WebSiteJsonLd />
+
       {/* Header */}
       <div className="pt-6 pb-2">
         <h1 className="text-[22px] font-light text-foreground">{title}</h1>

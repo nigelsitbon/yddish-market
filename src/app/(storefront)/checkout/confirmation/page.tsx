@@ -3,6 +3,8 @@ import { OrderConfirmationContent } from "@/components/storefront/order-confirma
 
 export const metadata = {
   title: "Confirmation de commande",
+  description: "Votre commande sur YDDISH MARKET a été confirmée. Merci pour votre achat.",
+  robots: { index: false, follow: false },
 };
 
 export const dynamic = "force-dynamic";

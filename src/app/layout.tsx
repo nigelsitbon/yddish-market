@@ -11,26 +11,55 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://yddishmarket.com"),
   title: {
     default: "YDDISH MARKET | Marketplace Judaica Premium",
     template: "%s | YDDISH MARKET",
   },
   description:
-    "La marketplace de reference pour les objets Judaica : objets rituels, bijoux, art, mode, mezouzot, livres et alimentaire casher. Artisans verifies, paiement securise.",
+    "La marketplace de référence pour les objets Judaica : objets rituels, bijoux, art, mode, mezouzot, livres et alimentaire casher. Artisans vérifiés, paiement sécurisé.",
   keywords: [
     "judaica",
-    "marketplace",
-    "objets rituels",
+    "marketplace judaica",
+    "objets rituels juifs",
     "bijoux juifs",
     "mezouzot",
     "casher",
     "shabbat",
     "art juif",
+    "boutique juive en ligne",
+    "cadeau juif",
+    "menorah",
+    "hanoukkia",
   ],
+  alternates: {
+    canonical: "https://yddishmarket.com",
+  },
   openGraph: {
     type: "website",
     locale: "fr_FR",
     siteName: "YDDISH MARKET",
+    url: "https://yddishmarket.com",
+    title: "YDDISH MARKET | Marketplace Judaica Premium",
+    description:
+      "Découvrez des objets Judaica d'exception : bijoux, art, mezouzot, livres et plus. Artisans vérifiés, livraison sécurisée.",
+  },
+  twitter: {
+    card: "summary",
+    title: "YDDISH MARKET | Marketplace Judaica Premium",
+    description:
+      "Découvrez des objets Judaica d'exception : bijoux, art, mezouzot, livres et plus.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
   },
 };
 

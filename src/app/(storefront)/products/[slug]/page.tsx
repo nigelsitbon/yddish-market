@@ -8,6 +8,7 @@ import { ProductCard } from "@/components/storefront/product-card";
 import { formatPrice } from "@/lib/utils";
 import { Star, Package, Truck, Check } from "@/components/ui/icons";
 import { unstable_cache } from "next/cache";
+import { ProductJsonLd, BreadcrumbJsonLd } from "@/components/seo/json-ld";
 
 // ISR: revalidate every 300s — product data cached on CDN
 export const revalidate = 300;
@@ -18,7 +19,7 @@ const getProductMeta = unstable_cache(
   async (slug: string) => {
     return prisma.product.findUnique({
       where: { slug },
-      select: { title: true, description: true },
+      select: { title: true, description: true, images: true, price: true, slug: true },
     });
   },
   ["product-meta"],
@@ -78,9 +79,28 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
   if (!product) return { title: "Produit introuvable" };
 
+  const description = product.description.slice(0, 160);
+  const url = `https://yddishmarket.com/products/${product.slug}`;
+
   return {
     title: product.title,
-    description: product.description.slice(0, 160),
+    description,
+    alternates: { canonical: url },
+    openGraph: {
+      title: product.title,
+      description,
+      url,
+      type: "website",
+      images: product.images.length > 0
+        ? [{ url: product.images[0], width: 800, height: 800, alt: product.title }]
+        : [],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: product.title,
+      description,
+      images: product.images.length > 0 ? [product.images[0]] : [],
+    },
   };
 }
 
@@ -121,6 +141,30 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
 
   return (
     <div>
+      {/* SEO: Structured Data */}
+      <ProductJsonLd
+        name={product.title}
+        description={product.description}
+        image={product.images}
+        slug={product.slug}
+        price={product.price}
+        comparePrice={product.comparePrice}
+        inStock={product.stock > 0}
+        sku={product.sku}
+        seller={{ shopName: product.seller.shopName, slug: product.seller.slug }}
+        rating={averageRating > 0 ? averageRating : undefined}
+        reviewCount={product._count.reviews > 0 ? product._count.reviews : undefined}
+      />
+      <BreadcrumbJsonLd
+        items={[
+          { name: "Accueil", url: "https://yddishmarket.com" },
+          ...(primaryCategory
+            ? [{ name: primaryCategory.name, url: `https://yddishmarket.com/?category=${primaryCategory.slug}` }]
+            : []),
+          { name: product.title, url: `https://yddishmarket.com/products/${product.slug}` },
+        ]}
+      />
+
       {/* Breadcrumb */}
       <div className="mx-auto max-w-[1440px] px-4 sm:px-8 lg:px-12 pt-4 pb-2">
         <nav className="flex items-center gap-2 text-[12px] text-muted-foreground">
