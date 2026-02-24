@@ -5,6 +5,7 @@ import Image from "next/image";
 import { ShoppingCart, Package, Truck, Check, X as XIcon } from "@/components/ui/icons";
 import { formatPrice } from "@/lib/utils";
 import { Badge } from "@/components/ui";
+import { CARRIERS, getCarrierName } from "@/lib/carriers";
 
 type PayoutInfo = {
   id: string;
@@ -19,6 +20,7 @@ type OrderItemData = {
   subtotal: number;
   commission: number;
   status: string;
+  carrier: string | null;
   trackingNumber: string | null;
   trackingUrl: string | null;
   shippedAt: string | null;
@@ -60,6 +62,7 @@ export function OrdersList() {
   const [updatingId, setUpdatingId] = useState<string | null>(null);
   const [trackingModal, setTrackingModal] = useState<string | null>(null);
   const [trackingNumber, setTrackingNumber] = useState("");
+  const [selectedCarrier, setSelectedCarrier] = useState("");
 
   const fetchOrders = useCallback(async () => {
     setLoading(true);
@@ -83,10 +86,11 @@ export function OrdersList() {
     fetchOrders();
   }, [fetchOrders]);
 
-  const handleUpdateStatus = async (orderItemId: string, status: string, tracking?: string) => {
+  const handleUpdateStatus = async (orderItemId: string, status: string, tracking?: string, carrier?: string) => {
     setUpdatingId(orderItemId);
     try {
       const body: Record<string, string> = { status };
+      if (carrier) body.carrier = carrier;
       if (tracking) body.trackingNumber = tracking;
 
       await fetch(`/api/dashboard/orders/${orderItemId}`, {
@@ -101,6 +105,7 @@ export function OrdersList() {
       setUpdatingId(null);
       setTrackingModal(null);
       setTrackingNumber("");
+      setSelectedCarrier("");
     }
   };
 
@@ -198,9 +203,23 @@ export function OrdersList() {
 
                       {/* Tracking */}
                       {item.trackingNumber && (
-                        <p className="text-[11px] text-foreground mt-1">
-                          Suivi : {item.trackingNumber}
-                        </p>
+                        <div className="flex items-center gap-2 mt-1 text-[11px]">
+                          <span className="text-muted-foreground">
+                            {item.carrier ? getCarrierName(item.carrier) ?? item.carrier : "Suivi"}
+                          </span>
+                          {item.trackingUrl ? (
+                            <a
+                              href={item.trackingUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-accent hover:underline flex items-center gap-1"
+                            >
+                              {item.trackingNumber} <Truck size={11} />
+                            </a>
+                          ) : (
+                            <span className="text-foreground">{item.trackingNumber}</span>
+                          )}
+                        </div>
                       )}
 
                       {/* Action buttons */}
@@ -239,30 +258,47 @@ export function OrdersList() {
 
                   {/* Tracking modal */}
                   {trackingModal === item.id && (
-                    <div className="mt-3 p-3 border border-border bg-muted/50">
-                      <p className="text-[11px] text-foreground mb-2">Numéro de suivi (optionnel)</p>
-                      <div className="flex gap-2">
+                    <div className="mt-3 p-4 border border-border bg-muted/50">
+                      <p className="text-[12px] font-medium text-foreground mb-3">Informations d&apos;expédition</p>
+                      <div className="space-y-2">
+                        <select
+                          value={selectedCarrier}
+                          onChange={(e) => setSelectedCarrier(e.target.value)}
+                          className="w-full h-9 px-2 text-[12px] border border-border bg-white focus:border-foreground focus:outline-none appearance-none"
+                        >
+                          <option value="">Transporteur (optionnel)</option>
+                          {CARRIERS.map((c) => (
+                            <option key={c.id} value={c.id}>{c.name}</option>
+                          ))}
+                        </select>
                         <input
                           type="text"
                           value={trackingNumber}
                           onChange={(e) => setTrackingNumber(e.target.value)}
-                          placeholder="Ex: FR12345678"
-                          className="flex-1 h-9 px-2 text-[12px] border border-border bg-white focus:border-foreground focus:outline-none"
+                          placeholder="Numéro de suivi (optionnel)"
+                          className="w-full h-9 px-2 text-[12px] border border-border bg-white focus:border-foreground focus:outline-none"
                         />
-                        <button
-                          type="button"
-                          onClick={() => handleUpdateStatus(item.id, "SHIPPED", trackingNumber || undefined)}
-                          className="h-9 px-4 text-[11px] bg-foreground text-[#FFFFFF]"
-                        >
-                          Confirmer
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => { setTrackingModal(null); setTrackingNumber(""); }}
-                          className="h-9 px-3 text-[11px] border border-border text-muted-foreground"
-                        >
-                          Annuler
-                        </button>
+                        {selectedCarrier && selectedCarrier !== "other" && trackingNumber && (
+                          <p className="text-[10px] text-muted-foreground">
+                            Le lien de suivi sera généré automatiquement
+                          </p>
+                        )}
+                        <div className="flex gap-2 pt-1">
+                          <button
+                            type="button"
+                            onClick={() => handleUpdateStatus(item.id, "SHIPPED", trackingNumber || undefined, selectedCarrier || undefined)}
+                            className="h-9 px-4 text-[11px] bg-foreground text-[#FFFFFF]"
+                          >
+                            Confirmer l&apos;expédition
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => { setTrackingModal(null); setTrackingNumber(""); setSelectedCarrier(""); }}
+                            className="h-9 px-3 text-[11px] border border-border text-muted-foreground"
+                          >
+                            Annuler
+                          </button>
+                        </div>
                       </div>
                     </div>
                   )}

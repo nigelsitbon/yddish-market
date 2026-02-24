@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
 import { updateOrderItemStatusSchema } from "@/lib/validators/order";
 import { createPayout } from "@/lib/payouts";
+import { getTrackingUrl } from "@/lib/carriers";
 
 /* ── PATCH /api/dashboard/orders/[orderId] — Mettre à jour le statut ── */
 export async function PATCH(
@@ -37,11 +38,17 @@ export async function PATCH(
       );
     }
 
-    const { status, trackingNumber, trackingUrl } = parsed.data;
+    const { status, carrier, trackingNumber, trackingUrl } = parsed.data;
 
     const updateData: Record<string, unknown> = { status };
+    if (carrier) updateData.carrier = carrier;
     if (trackingNumber) updateData.trackingNumber = trackingNumber;
-    if (trackingUrl) updateData.trackingUrl = trackingUrl;
+    // Auto-generate tracking URL from carrier + tracking number
+    if (carrier && trackingNumber) {
+      updateData.trackingUrl = getTrackingUrl(carrier, trackingNumber);
+    } else if (trackingUrl) {
+      updateData.trackingUrl = trackingUrl;
+    }
     if (status === "SHIPPED") updateData.shippedAt = new Date();
     if (status === "DELIVERED") updateData.deliveredAt = new Date();
 

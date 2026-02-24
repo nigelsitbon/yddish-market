@@ -272,6 +272,7 @@ model OrderItem {
   commission     Float
   shippingAmount Float       @default(0)
   status         OrderStatus @default(PENDING)
+  carrier        String?
   trackingNumber String?
   trackingUrl    String?
   shippedAt      DateTime?

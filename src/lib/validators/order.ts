@@ -7,6 +7,7 @@ export const createOrderSchema = z.object({
 
 export const updateOrderItemStatusSchema = z.object({
   status: z.enum(["CONFIRMED", "PROCESSING", "SHIPPED", "DELIVERED", "CANCELLED"]),
+  carrier: z.string().optional(),
   trackingNumber: z.string().optional(),
   trackingUrl: z.string().url().optional(),
 });
