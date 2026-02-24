@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Plus, Search, Package, MoreHorizontal, Eye, Edit, Archive } from "lucide-react";
@@ -34,15 +34,27 @@ export function ProductsList() {
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [page, setPage] = useState(1);
   const [menuOpen, setMenuOpen] = useState<string | null>(null);
+  const debounceRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Debounce search — 300ms delay
+  const handleSearchChange = (value: string) => {
+    setSearch(value);
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => {
+      setDebouncedSearch(value);
+      setPage(1);
+    }, 300);
+  };
 
   const fetchProducts = useCallback(async () => {
     setLoading(true);
     try {
       const params = new URLSearchParams();
-      if (search) params.set("search", search);
+      if (debouncedSearch) params.set("search", debouncedSearch);
       if (statusFilter !== "all") params.set("status", statusFilter);
       params.set("page", String(page));
 
@@ -57,7 +69,7 @@ export function ProductsList() {
     } finally {
       setLoading(false);
     }
-  }, [search, statusFilter, page]);
+  }, [debouncedSearch, statusFilter, page]);
 
   useEffect(() => {
     fetchProducts();
@@ -65,11 +77,14 @@ export function ProductsList() {
 
   const handleArchive = async (productId: string) => {
     setMenuOpen(null);
+    // Optimistic removal
+    setProducts((prev) => prev.filter((p) => p.id !== productId));
+    setTotal((prev) => prev - 1);
     try {
       await fetch(`/api/dashboard/products/${productId}`, { method: "DELETE" });
+    } catch {
+      // Revert on error
       fetchProducts();
-    } catch (err) {
-      console.error("Failed to archive", err);
     }
   };
 
@@ -100,7 +115,7 @@ export function ProductsList() {
             type="text"
             placeholder="Rechercher un produit..."
             value={search}
-            onChange={(e) => { setSearch(e.target.value); setPage(1); }}
+            onChange={(e) => handleSearchChange(e.target.value)}
             className="w-full h-10 pl-9 pr-3 text-[13px] border border-border bg-white focus:border-foreground focus:outline-none transition-colors"
           />
         </div>

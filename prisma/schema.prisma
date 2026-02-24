@@ -288,6 +288,8 @@ model OrderItem {
 
   @@index([orderId])
   @@index([sellerId])
+  @@index([sellerId, status])
+  @@index([sellerId, createdAt])
 }
 
 model Favorite {
@@ -349,6 +351,7 @@ model Payout {
 
   @@index([sellerId])
   @@index([status])
+  @@index([sellerId, status])
 }
 
 model SiteSetting {

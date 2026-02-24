@@ -21,7 +21,8 @@ export async function GET(req: Request) {
       where.status = status;
     }
 
-    const [payouts, total] = await Promise.all([
+    // All 3 queries run in parallel instead of sequentially
+    const [payouts, total, stats] = await Promise.all([
       prisma.payout.findMany({
         where,
         include: {
@@ -42,15 +43,13 @@ export async function GET(req: Request) {
         take: limit,
       }),
       prisma.payout.count({ where }),
+      prisma.payout.groupBy({
+        by: ["status"],
+        where: { sellerId: user.sellerProfile.id },
+        _sum: { amount: true },
+        _count: true,
+      }),
     ]);
-
-    // Summary stats
-    const stats = await prisma.payout.groupBy({
-      by: ["status"],
-      where: { sellerId: user.sellerProfile.id },
-      _sum: { amount: true },
-      _count: true,
-    });
 
     const summary = {
       totalCompleted: 0,

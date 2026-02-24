@@ -86,26 +86,40 @@ export function OrdersList() {
     fetchOrders();
   }, [fetchOrders]);
 
-  const handleUpdateStatus = async (orderItemId: string, status: string, tracking?: string, carrier?: string) => {
+  const handleUpdateStatus = async (orderItemId: string, newStatus: string, tracking?: string, carrier?: string) => {
     setUpdatingId(orderItemId);
+    // Optimistic update — instant UI feedback
+    setOrders((prev) =>
+      prev.map((o) =>
+        o.id === orderItemId
+          ? { ...o, status: newStatus, trackingNumber: tracking ?? o.trackingNumber, carrier: carrier ?? o.carrier }
+          : o
+      )
+    );
+    setTrackingModal(null);
+    setTrackingNumber("");
+    setSelectedCarrier("");
+
     try {
-      const body: Record<string, string> = { status };
+      const body: Record<string, string> = { status: newStatus };
       if (carrier) body.carrier = carrier;
       if (tracking) body.trackingNumber = tracking;
 
-      await fetch(`/api/dashboard/orders/${orderItemId}`, {
+      const res = await fetch(`/api/dashboard/orders/${orderItemId}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
       });
+      const json = await res.json();
+      if (!json.success) {
+        // Revert on failure
+        fetchOrders();
+      }
+    } catch {
+      // Revert on error
       fetchOrders();
-    } catch (err) {
-      console.error("Failed to update status", err);
     } finally {
       setUpdatingId(null);
-      setTrackingModal(null);
-      setTrackingNumber("");
-      setSelectedCarrier("");
     }
   };
 
