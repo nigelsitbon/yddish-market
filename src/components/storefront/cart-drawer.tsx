@@ -84,12 +84,12 @@ export function CartDrawer() {
     <>
       {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-black/30 z-[60] transition-opacity"
+        className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[60] transition-opacity"
         onClick={() => setOpen(false)}
       />
 
       {/* Drawer */}
-      <div className="fixed right-0 top-0 bottom-0 w-full max-w-[420px] bg-white z-[61] flex flex-col shadow-xl">
+      <div className="fixed right-0 top-0 bottom-0 w-full max-w-[420px] bg-white z-[61] flex flex-col shadow-2xl rounded-l-2xl">
         {/* Header */}
         <div className="flex items-center justify-between px-6 h-[60px] border-b border-border shrink-0">
           <h2 className="text-[14px] font-medium tracking-wide uppercase text-foreground">
@@ -109,8 +109,8 @@ export function CartDrawer() {
         <div className="flex-1 overflow-y-auto">
           {isLoading ? (
             <div className="p-6 space-y-4">
-              <div className="h-20 bg-muted animate-pulse" />
-              <div className="h-20 bg-muted animate-pulse" />
+              <div className="h-20 bg-muted animate-pulse rounded-xl" />
+              <div className="h-20 bg-muted animate-pulse rounded-xl" />
             </div>
           ) : items.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full px-6 text-center">
@@ -138,7 +138,7 @@ export function CartDrawer() {
                       onClick={() => setOpen(false)}
                       className="shrink-0"
                     >
-                      <div className="w-[72px] h-[96px] bg-[#F5F5F0] relative overflow-hidden flex items-center justify-center">
+                      <div className="w-[72px] h-[96px] bg-[#F5F5F0] relative overflow-hidden flex items-center justify-center rounded-lg">
                         {item.product.images[0] ? (
                           <Image
                             src={item.product.images[0]}
@@ -219,7 +219,7 @@ export function CartDrawer() {
               <Link
                 href="/checkout"
                 onClick={() => setOpen(false)}
-                className="flex items-center justify-center gap-2 w-full h-13 bg-accent text-[#FFFFFF] text-[14px] tracking-wide font-semibold hover:bg-accent/90 transition-colors shadow-md"
+                className="flex items-center justify-center gap-2 w-full h-13 btn-gradient-dark text-[#FFFFFF] text-[14px] tracking-wide font-semibold transition-all duration-200 shadow-md hover:shadow-lg rounded-xl"
               >
                 Passer commande
                 <ArrowRight size={16} strokeWidth={1.5} />
@@ -227,7 +227,7 @@ export function CartDrawer() {
               <Link
                 href="/cart"
                 onClick={() => setOpen(false)}
-                className="flex items-center justify-center w-full h-12 border border-foreground text-foreground text-[13px] tracking-wide hover:bg-foreground hover:text-[#FFFFFF] transition-colors"
+                className="flex items-center justify-center w-full h-12 border border-foreground/20 text-foreground text-[13px] tracking-wide hover:bg-foreground/5 transition-all duration-200 rounded-xl"
               >
                 Voir le panier
               </Link>

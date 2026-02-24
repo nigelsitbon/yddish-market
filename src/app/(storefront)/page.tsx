@@ -233,7 +233,7 @@ export default async function HomePage({
                 ...(q ? { q } : {}),
                 page: String(page - 1),
               }).toString()}`}
-              className="px-4 py-2 text-[13px] border border-border text-foreground hover:border-foreground transition-colors"
+              className="px-5 py-2 text-[13px] border border-border text-foreground hover:border-foreground transition-all duration-200 rounded-xl"
             >
               Précédent
             </Link>
@@ -250,7 +250,7 @@ export default async function HomePage({
                 ...(q ? { q } : {}),
                 page: String(page + 1),
               }).toString()}`}
-              className="px-4 py-2 text-[13px] border border-border text-foreground hover:border-foreground transition-colors"
+              className="px-5 py-2 text-[13px] border border-border text-foreground hover:border-foreground transition-all duration-200 rounded-xl"
             >
               Suivant
             </Link>

@@ -71,7 +71,7 @@ export function Header() {
   const isAdmin = userCtx?.role === "ADMIN";
 
   return (
-    <header className="sticky top-0 z-50 bg-white">
+    <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md">
       {/* Top utility bar — contextual links */}
       {isSignedIn && (isSeller || isAdmin) && (
         <div className="border-b border-border bg-[#FAFAF7]">
@@ -156,7 +156,7 @@ export function Header() {
                   >
                     <ShoppingBag size={20} strokeWidth={1.5} />
                     {cartItemCount > 0 && (
-                      <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] flex items-center justify-center bg-foreground text-[#FFFFFF] text-[10px] font-medium px-1">
+                      <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] flex items-center justify-center bg-foreground text-[#FFFFFF] text-[10px] font-medium px-1 rounded-full">
                         {cartItemCount}
                       </span>
                     )}
@@ -182,7 +182,7 @@ export function Header() {
                   >
                     <ShoppingBag size={20} strokeWidth={1.5} />
                     {cartItemCount > 0 && (
-                      <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] flex items-center justify-center bg-foreground text-[#FFFFFF] text-[10px] font-medium px-1">
+                      <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] flex items-center justify-center bg-foreground text-[#FFFFFF] text-[10px] font-medium px-1 rounded-full">
                         {cartItemCount}
                       </span>
                     )}
@@ -215,7 +215,7 @@ export function Header() {
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Que recherchez-vous ?"
                 aria-label="Rechercher un produit"
-                className="w-full h-10 pl-8 pr-10 bg-transparent text-sm border-b border-foreground focus:outline-none placeholder:text-muted-foreground"
+                className="w-full h-10 pl-8 pr-10 bg-muted/50 text-sm rounded-xl border-0 focus:outline-none focus:ring-2 focus:ring-accent/20 placeholder:text-muted-foreground transition-all"
                 autoFocus
               />
               {searchQuery && (

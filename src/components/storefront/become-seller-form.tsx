@@ -58,7 +58,7 @@ export function BecomeSellerForm() {
       <div className="max-w-lg mx-auto">
         {/* Header */}
         <div className="text-center mb-10">
-          <div className="w-14 h-14 bg-foreground text-[#FFFFFF] flex items-center justify-center mx-auto mb-4">
+          <div className="w-14 h-14 bg-foreground text-[#FFFFFF] flex items-center justify-center mx-auto mb-4 rounded-2xl">
             <Store size={24} strokeWidth={1.5} />
           </div>
           <h1 className="text-[24px] font-light text-foreground mb-2">
@@ -76,7 +76,7 @@ export function BecomeSellerForm() {
             { label: "Paiement", value: "Sécurisé", desc: "via Stripe Connect" },
             { label: "Audience", value: "Ciblée", desc: "communauté Judaica" },
           ].map((item) => (
-            <div key={item.label} className="border border-border p-4 text-center">
+            <div key={item.label} className="border border-border p-4 text-center rounded-xl">
               <p className="text-[18px] font-light text-foreground">{item.value}</p>
               <p className="text-[11px] text-muted-foreground mt-0.5">{item.desc}</p>
             </div>
@@ -97,7 +97,7 @@ export function BecomeSellerForm() {
               minLength={2}
               maxLength={50}
               placeholder="Ex: Atelier David"
-              className="w-full h-11 px-3 text-[13px] border border-border bg-white focus:border-foreground focus:outline-none transition-colors placeholder:text-muted-foreground/50"
+              className="w-full h-11 px-3 text-[13px] border border-border bg-white focus:border-accent/50 focus:ring-2 focus:ring-accent/20 focus:outline-none transition-all duration-200 rounded-xl placeholder:text-muted-foreground/50"
             />
           </div>
 
@@ -111,7 +111,7 @@ export function BecomeSellerForm() {
               rows={3}
               maxLength={500}
               placeholder="Présentez votre atelier, votre savoir-faire..."
-              className="w-full px-3 py-2.5 text-[13px] border border-border bg-white focus:border-foreground focus:outline-none transition-colors resize-none placeholder:text-muted-foreground/50"
+              className="w-full px-3 py-2.5 text-[13px] border border-border bg-white focus:border-accent/50 focus:ring-2 focus:ring-accent/20 focus:outline-none transition-all duration-200 rounded-xl resize-none placeholder:text-muted-foreground/50"
             />
             <p className="text-[11px] text-muted-foreground mt-1">
               {description.length}/500 caractères
@@ -142,7 +142,7 @@ export function BecomeSellerForm() {
           <button
             type="submit"
             disabled={isSubmitting || !shopName.trim()}
-            className="flex items-center justify-center gap-2 w-full h-13 mt-4 bg-accent text-[#FFFFFF] text-[14px] tracking-wide font-semibold hover:bg-accent/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-md"
+            className="flex items-center justify-center gap-2 w-full h-13 mt-4 btn-gradient-dark text-[#FFFFFF] text-[14px] tracking-wide font-semibold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-md hover:shadow-lg rounded-xl"
           >
             {isSubmitting ? (
               <span className="inline-block w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />

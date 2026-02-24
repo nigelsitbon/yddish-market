@@ -2,10 +2,11 @@ import { forwardRef, type ButtonHTMLAttributes } from "react";
 import { cn } from "@/lib/utils";
 
 const variants = {
-  default: "bg-accent text-[#FFFFFF] hover:bg-accent-hover",
-  outline: "border border-border bg-transparent hover:bg-muted text-foreground",
+  default: "btn-gradient-dark text-[#FFFFFF] shadow-sm hover:shadow-md",
+  accent: "btn-gradient-accent text-[#FFFFFF] shadow-sm hover:shadow-md",
+  outline: "border border-foreground/20 bg-transparent hover:bg-foreground/5 text-foreground",
   ghost: "hover:bg-muted text-foreground",
-  destructive: "bg-destructive text-[#FFFFFF] hover:bg-destructive/90",
+  destructive: "bg-destructive text-[#FFFFFF] hover:bg-destructive/90 shadow-sm",
   link: "text-accent underline-offset-4 hover:underline p-0 h-auto",
 } as const;
 
@@ -27,7 +28,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       <button
         ref={ref}
         className={cn(
-          "inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50",
+          "inline-flex items-center justify-center rounded-xl font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/30 disabled:pointer-events-none disabled:opacity-50",
           variants[variant],
           sizes[size],
           className

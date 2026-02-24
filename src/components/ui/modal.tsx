@@ -40,7 +40,7 @@ export function Modal({ open, onClose, children, title, className }: ModalProps)
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       {/* Backdrop */}
       <div
-        className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+        className="absolute inset-0 bg-black/40 backdrop-blur-md"
         onClick={onClose}
         aria-hidden="true"
       />
@@ -48,7 +48,7 @@ export function Modal({ open, onClose, children, title, className }: ModalProps)
       {/* Content */}
       <div
         className={cn(
-          "relative z-10 w-full max-w-lg mx-4 bg-card rounded-lg shadow-xl border",
+          "relative z-10 w-full max-w-lg mx-4 bg-card rounded-2xl shadow-2xl border border-border/60",
           className
         )}
         role="dialog"
@@ -62,7 +62,7 @@ export function Modal({ open, onClose, children, title, className }: ModalProps)
             <button
               type="button"
               onClick={onClose}
-              className="p-1 rounded-md hover:bg-muted transition-colors"
+              className="p-1.5 rounded-xl hover:bg-muted transition-colors"
               aria-label="Fermer"
             >
               <X className="h-4 w-4" />

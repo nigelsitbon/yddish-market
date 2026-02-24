@@ -347,7 +347,7 @@ export function CheckoutForm() {
                       value={form.firstName}
                       onChange={(e) => setForm({ ...form, firstName: e.target.value })}
                       required
-                      className="w-full h-11 px-3 text-[13px] border border-border bg-white focus:border-foreground focus:outline-none transition-colors"
+                      className="w-full h-11 px-3 text-[13px] border border-border bg-white focus:border-accent/50 focus:ring-2 focus:ring-accent/20 focus:outline-none transition-all duration-200 rounded-xl"
                     />
                   </div>
                   <div>
@@ -359,7 +359,7 @@ export function CheckoutForm() {
                       value={form.lastName}
                       onChange={(e) => setForm({ ...form, lastName: e.target.value })}
                       required
-                      className="w-full h-11 px-3 text-[13px] border border-border bg-white focus:border-foreground focus:outline-none transition-colors"
+                      className="w-full h-11 px-3 text-[13px] border border-border bg-white focus:border-accent/50 focus:ring-2 focus:ring-accent/20 focus:outline-none transition-all duration-200 rounded-xl"
                     />
                   </div>
                 </div>
@@ -374,7 +374,7 @@ export function CheckoutForm() {
                     onChange={(e) => setForm({ ...form, street: e.target.value })}
                     required
                     placeholder="Numéro et nom de rue"
-                    className="w-full h-11 px-3 text-[13px] border border-border bg-white focus:border-foreground focus:outline-none transition-colors placeholder:text-muted-foreground/50"
+                    className="w-full h-11 px-3 text-[13px] border border-border bg-white focus:border-accent/50 focus:ring-2 focus:ring-accent/20 focus:outline-none transition-all duration-200 rounded-xl placeholder:text-muted-foreground/50"
                   />
                 </div>
 
@@ -387,7 +387,7 @@ export function CheckoutForm() {
                     value={form.street2}
                     onChange={(e) => setForm({ ...form, street2: e.target.value })}
                     placeholder="Appartement, étage, etc."
-                    className="w-full h-11 px-3 text-[13px] border border-border bg-white focus:border-foreground focus:outline-none transition-colors placeholder:text-muted-foreground/50"
+                    className="w-full h-11 px-3 text-[13px] border border-border bg-white focus:border-accent/50 focus:ring-2 focus:ring-accent/20 focus:outline-none transition-all duration-200 rounded-xl placeholder:text-muted-foreground/50"
                   />
                 </div>
 
@@ -401,7 +401,7 @@ export function CheckoutForm() {
                       value={form.zip}
                       onChange={(e) => setForm({ ...form, zip: e.target.value })}
                       required
-                      className="w-full h-11 px-3 text-[13px] border border-border bg-white focus:border-foreground focus:outline-none transition-colors"
+                      className="w-full h-11 px-3 text-[13px] border border-border bg-white focus:border-accent/50 focus:ring-2 focus:ring-accent/20 focus:outline-none transition-all duration-200 rounded-xl"
                     />
                   </div>
                   <div>
@@ -413,7 +413,7 @@ export function CheckoutForm() {
                       value={form.city}
                       onChange={(e) => setForm({ ...form, city: e.target.value })}
                       required
-                      className="w-full h-11 px-3 text-[13px] border border-border bg-white focus:border-foreground focus:outline-none transition-colors"
+                      className="w-full h-11 px-3 text-[13px] border border-border bg-white focus:border-accent/50 focus:ring-2 focus:ring-accent/20 focus:outline-none transition-all duration-200 rounded-xl"
                     />
                   </div>
                 </div>
@@ -427,7 +427,7 @@ export function CheckoutForm() {
                       <select
                         value={form.country}
                         onChange={(e) => setForm({ ...form, country: e.target.value })}
-                        className="w-full h-11 px-3 pr-8 text-[13px] border border-border bg-white focus:border-foreground focus:outline-none transition-colors appearance-none"
+                        className="w-full h-11 px-3 pr-8 text-[13px] border border-border bg-white focus:border-accent/50 focus:ring-2 focus:ring-accent/20 focus:outline-none transition-all duration-200 rounded-xl appearance-none"
                       >
                         {COUNTRY_OPTIONS.map((c) => (
                           <option key={c.value} value={c.value}>{c.label}</option>
@@ -445,7 +445,7 @@ export function CheckoutForm() {
                       value={form.phone}
                       onChange={(e) => setForm({ ...form, phone: e.target.value })}
                       placeholder="+33 6 12 34 56 78"
-                      className="w-full h-11 px-3 text-[13px] border border-border bg-white focus:border-foreground focus:outline-none transition-colors placeholder:text-muted-foreground/50"
+                      className="w-full h-11 px-3 text-[13px] border border-border bg-white focus:border-accent/50 focus:ring-2 focus:ring-accent/20 focus:outline-none transition-all duration-200 rounded-xl placeholder:text-muted-foreground/50"
                     />
                   </div>
                 </div>
@@ -489,7 +489,7 @@ export function CheckoutForm() {
 
           {/* Right: Summary */}
           <div className="mt-8 lg:mt-0">
-            <div className="bg-[#FAFAFA] p-6 lg:sticky lg:top-[120px]">
+            <div className="bg-[#FAFAFA] p-6 lg:sticky lg:top-[120px] rounded-2xl">
               <h2 className="text-[14px] font-medium text-foreground tracking-wide uppercase mb-6">
                 Récapitulatif
               </h2>
@@ -564,7 +564,7 @@ export function CheckoutForm() {
               </div>
 
               {error && (
-                <div className="mt-4 p-3 bg-red-50 border border-red-200 text-[12px] text-red-700">
+                <div className="mt-4 p-3 bg-red-50 border border-red-200 text-[12px] text-red-700 rounded-xl">
                   {error}
                 </div>
               )}
@@ -572,7 +572,7 @@ export function CheckoutForm() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="flex items-center justify-center gap-2 w-full h-13 mt-6 bg-accent text-[#FFFFFF] text-[14px] tracking-wide font-semibold hover:bg-accent/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-md"
+                className="flex items-center justify-center gap-2 w-full h-13 mt-6 btn-gradient-dark text-[#FFFFFF] text-[14px] tracking-wide font-semibold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-md hover:shadow-lg rounded-xl"
               >
                 {isSubmitting ? (
                   <span className="inline-block w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />

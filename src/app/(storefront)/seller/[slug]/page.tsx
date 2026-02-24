@@ -123,7 +123,7 @@ export default async function SellerPage({
         <div className="relative -mt-12 mb-8">
           <div className="flex items-end gap-6">
             {/* Avatar */}
-            <div className="w-24 h-24 bg-white border border-border flex items-center justify-center shadow-sm">
+            <div className="w-24 h-24 bg-white border border-border flex items-center justify-center shadow-sm rounded-2xl">
               <span className="text-[24px] font-light text-muted-foreground">
                 {seller.shopName.charAt(0)}
               </span>
@@ -134,7 +134,7 @@ export default async function SellerPage({
                   {seller.shopName}
                 </h1>
                 {seller.verified && (
-                  <span className="px-2 py-0.5 text-[10px] font-medium tracking-wider uppercase border border-accent text-accent">
+                  <span className="px-2.5 py-0.5 text-[10px] font-medium tracking-wider uppercase border border-accent text-accent rounded-full">
                     Vérifié
                   </span>
                 )}

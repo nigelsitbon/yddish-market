@@ -186,7 +186,7 @@ export function OrderConfirmationContent() {
       </div>
 
       {/* Info */}
-      <div className="bg-[#FAFAFA] p-6 mb-8 text-[12px] text-muted-foreground space-y-2">
+      <div className="bg-[#FAFAFA] p-6 mb-8 text-[12px] text-muted-foreground space-y-2 rounded-xl">
         <p>
           Un email de confirmation sera envoyé à votre adresse.
         </p>
@@ -200,7 +200,7 @@ export function OrderConfirmationContent() {
       <div className="flex flex-col sm:flex-row gap-3">
         <Link
           href="/"
-          className="flex items-center justify-center gap-2 h-12 px-8 bg-foreground text-[#FFFFFF] text-[13px] tracking-wide hover:bg-foreground/90 transition-colors"
+          className="flex items-center justify-center gap-2 h-12 px-8 btn-gradient-dark text-[#FFFFFF] text-[13px] tracking-wide transition-all duration-200 shadow-sm hover:shadow-md rounded-xl"
         >
           Continuer mes achats
           <ArrowRight size={16} strokeWidth={1.5} />

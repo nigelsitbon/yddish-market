@@ -50,14 +50,14 @@ export function ProductCard({ product }: { product: ProductCardData }) {
   return (
     <Link href={`/products/${product.slug}`} className="group block">
       {/* Image */}
-      <div className="relative aspect-[3/4] bg-[#F5F5F5] mb-3 overflow-hidden">
+      <div className="relative aspect-[3/4] bg-[#F5F5F5] mb-3 overflow-hidden rounded-xl">
         {hasImage ? (
           <Image
             src={imageUrl}
             alt={product.title}
             fill
             sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-            className="object-cover group-hover:scale-[1.03] transition-transform duration-500"
+            className="object-cover group-hover:scale-[1.02] transition-transform duration-500"
             onError={() => setImgError(true)}
           />
         ) : (
@@ -67,19 +67,19 @@ export function ProductCard({ product }: { product: ProductCardData }) {
         {/* Favorite button */}
         <button
           type="button"
-          className="absolute top-3 right-3 z-10 p-1 text-muted-foreground hover:text-foreground transition-colors"
+          className="absolute top-3 right-3 z-10 p-2 rounded-full bg-[#FFFFFF]/80 backdrop-blur-sm text-muted-foreground hover:text-foreground hover:bg-[#FFFFFF] shadow-sm hover:shadow-md transition-all duration-200"
           onClick={(e) => {
             e.preventDefault();
             // TODO: toggle favorite
           }}
           aria-label="Ajouter aux favoris"
         >
-          <Heart size={18} strokeWidth={1.5} />
+          <Heart size={16} strokeWidth={1.5} />
         </button>
 
         {/* Discount badge */}
         {hasDiscount && (
-          <span className="absolute top-3 left-3 bg-sale text-[#FFFFFF] text-[10px] font-medium px-2 py-0.5 tracking-wide">
+          <span className="absolute top-3 left-3 bg-sale text-[#FFFFFF] text-[10px] font-medium px-2.5 py-1 tracking-wide rounded-lg">
             -{Math.round(((product.comparePrice! - product.price) / product.comparePrice!) * 100)}%
           </span>
         )}

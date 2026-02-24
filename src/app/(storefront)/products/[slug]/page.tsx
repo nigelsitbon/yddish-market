@@ -239,7 +239,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
                     <button
                       key={v.id}
                       type="button"
-                      className={`px-4 py-2 text-[12px] border transition-colors ${
+                      className={`px-4 py-2 text-[12px] border transition-all duration-200 rounded-lg ${
                         i === 0
                           ? "border-foreground text-foreground"
                           : "border-border text-muted-foreground hover:border-foreground hover:text-foreground"
@@ -328,10 +328,10 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
             <div className="mt-6 pt-6 border-t border-border">
               <Link
                 href={`/seller/${product.seller.slug}`}
-                className="block bg-[#FAFAF7] border border-border/60 p-4 hover:border-foreground/20 transition-colors group"
+                className="block bg-[#FAFAF7] border border-border/60 p-5 hover:border-foreground/20 transition-all duration-200 group rounded-xl"
               >
                 <div className="flex items-center gap-3 mb-3">
-                  <div className="w-10 h-10 bg-foreground text-[#FFFFFF] flex items-center justify-center text-[13px] font-medium shrink-0">
+                  <div className="w-10 h-10 bg-foreground text-[#FFFFFF] flex items-center justify-center text-[13px] font-medium shrink-0 rounded-xl">
                     {product.seller.shopName.charAt(0).toUpperCase()}
                   </div>
                   <div className="flex-1 min-w-0">

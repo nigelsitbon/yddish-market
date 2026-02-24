@@ -26,7 +26,7 @@ export function ImageGallery({ images, title }: ImageGalleryProps) {
               key={i}
               type="button"
               onClick={() => setCurrent(i)}
-              className={`relative w-16 h-20 flex-shrink-0 border transition-colors ${
+              className={`relative w-16 h-20 flex-shrink-0 border transition-all duration-200 rounded-lg overflow-hidden ${
                 i === current ? "border-foreground" : "border-border hover:border-foreground/50"
               }`}
             >
@@ -43,7 +43,7 @@ export function ImageGallery({ images, title }: ImageGalleryProps) {
       )}
 
       {/* Main image */}
-      <div className="relative flex-1 aspect-[3/4] bg-[#F5F5F5] overflow-hidden group">
+      <div className="relative flex-1 aspect-[3/4] bg-[#F5F5F5] overflow-hidden group rounded-xl">
         {hasImages ? (
           <Image
             src={images[current]}
@@ -67,7 +67,7 @@ export function ImageGallery({ images, title }: ImageGalleryProps) {
             <button
               type="button"
               onClick={prev}
-              className="absolute left-3 top-1/2 -translate-y-1/2 p-2 bg-white/80 opacity-0 group-hover:opacity-100 transition-opacity"
+              className="absolute left-3 top-1/2 -translate-y-1/2 p-2 bg-white/80 backdrop-blur-sm rounded-full opacity-0 group-hover:opacity-100 transition-all duration-200 shadow-sm hover:shadow-md"
               aria-label="Image precedente"
             >
               <ChevronLeft size={18} />
@@ -75,7 +75,7 @@ export function ImageGallery({ images, title }: ImageGalleryProps) {
             <button
               type="button"
               onClick={next}
-              className="absolute right-3 top-1/2 -translate-y-1/2 p-2 bg-white/80 opacity-0 group-hover:opacity-100 transition-opacity"
+              className="absolute right-3 top-1/2 -translate-y-1/2 p-2 bg-white/80 backdrop-blur-sm rounded-full opacity-0 group-hover:opacity-100 transition-all duration-200 shadow-sm hover:shadow-md"
               aria-label="Image suivante"
             >
               <ChevronRight size={18} />

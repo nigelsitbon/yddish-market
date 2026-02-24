@@ -11,7 +11,7 @@ type QuantitySelectorProps = {
 
 export function QuantitySelector({ value, onChange, max = 99, min = 1 }: QuantitySelectorProps) {
   return (
-    <div className="inline-flex items-center border border-border">
+    <div className="inline-flex items-center border border-border rounded-xl overflow-hidden">
       <button
         type="button"
         onClick={() => onChange(Math.max(min, value - 1))}

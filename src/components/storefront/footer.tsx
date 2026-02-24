@@ -40,7 +40,7 @@ const footerSections = [
 
 export function Footer() {
   return (
-    <footer className="border-t border-border">
+    <footer className="border-t border-border bg-[#FAFAF9]">
       {/* Links */}
       <div className="mx-auto max-w-[1440px] px-4 sm:px-8 lg:px-12 py-12 lg:py-16">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 lg:gap-16">
@@ -74,8 +74,8 @@ export function Footer() {
               &copy; {new Date().getFullYear()} EINSOF SAS &mdash; Tous droits reserves
             </p>
             <div className="flex items-center gap-6">
-              <span className="text-[11px] text-muted-foreground tracking-wide">Paiement securise</span>
-              <span className="text-[11px] text-muted-foreground tracking-wide">Artisans verifies</span>
+              <span className="text-[11px] text-muted-foreground tracking-wide border border-border/50 rounded-full px-3 py-1">Paiement securise</span>
+              <span className="text-[11px] text-muted-foreground tracking-wide border border-border/50 rounded-full px-3 py-1">Artisans verifies</span>
             </div>
           </div>
         </div>

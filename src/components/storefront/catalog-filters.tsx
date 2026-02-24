@@ -68,7 +68,7 @@ export function CatalogFilters({ categories }: CatalogFiltersProps) {
           <button
             type="button"
             onClick={() => setFiltersOpen(!filtersOpen)}
-            className={`flex items-center gap-2 text-[13px] px-3 py-1.5 border transition-colors ${
+            className={`flex items-center gap-2 text-[13px] px-4 py-1.5 border transition-all duration-200 rounded-full ${
               filtersOpen
                 ? "border-foreground bg-foreground text-[#FFFFFF]"
                 : "border-border text-foreground hover:border-foreground"
@@ -85,7 +85,7 @@ export function CatalogFilters({ categories }: CatalogFiltersProps) {
                 key={cat.slug}
                 type="button"
                 onClick={() => updateParams("category", "")}
-                className="flex items-center gap-1 px-3 py-1 text-[12px] border border-foreground text-foreground"
+                className="flex items-center gap-1 px-3 py-1 text-[12px] border border-foreground text-foreground rounded-full"
               >
                 {cat.name}
                 <X size={12} />
@@ -98,7 +98,7 @@ export function CatalogFilters({ categories }: CatalogFiltersProps) {
                 key={sub.slug}
                 type="button"
                 onClick={() => updateParams("category", "")}
-                className="flex items-center gap-1 px-3 py-1 text-[12px] border border-foreground text-foreground"
+                className="flex items-center gap-1 px-3 py-1 text-[12px] border border-foreground text-foreground rounded-full"
               >
                 {sub.name}
                 <X size={12} />
@@ -230,7 +230,7 @@ export function CatalogFilters({ categories }: CatalogFiltersProps) {
               key={cat.slug}
               type="button"
               onClick={() => updateParams("category", cat.slug === activeCategory ? "" : cat.slug)}
-              className={`whitespace-nowrap px-4 py-1.5 text-[12px] border transition-colors ${
+              className={`whitespace-nowrap px-4 py-1.5 text-[12px] border transition-all duration-200 rounded-full ${
                 activeCategory === cat.slug
                   ? "border-foreground bg-foreground text-[#FFFFFF]"
                   : "border-border text-foreground hover:border-foreground"

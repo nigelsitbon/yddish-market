@@ -2,11 +2,11 @@ import { type HTMLAttributes } from "react";
 import { cn } from "@/lib/utils";
 
 const variants = {
-  default: "bg-accent/10 text-accent",
-  success: "bg-success/10 text-success",
-  destructive: "bg-destructive/10 text-destructive",
-  outline: "border text-foreground",
-  muted: "bg-muted text-muted-foreground",
+  default: "bg-accent/8 text-accent border border-accent/15",
+  success: "bg-success/8 text-success border border-success/15",
+  destructive: "bg-destructive/8 text-destructive border border-destructive/15",
+  outline: "border border-border text-foreground",
+  muted: "bg-muted text-muted-foreground border border-transparent",
 } as const;
 
 type BadgeProps = HTMLAttributes<HTMLSpanElement> & {

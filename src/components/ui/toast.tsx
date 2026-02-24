@@ -77,7 +77,7 @@ function ToastItem({ toast, onRemove }: { toast: Toast; onRemove: () => void }) 
   return (
     <div
       className={cn(
-        "flex items-start gap-3 rounded-lg border p-4 shadow-lg bg-card animate-in slide-in-from-right",
+        "flex items-start gap-3 rounded-xl border p-4 shadow-lg bg-card animate-in slide-in-from-right",
         styles[toast.type]
       )}
     >
@@ -86,7 +86,7 @@ function ToastItem({ toast, onRemove }: { toast: Toast; onRemove: () => void }) 
       <button
         type="button"
         onClick={onRemove}
-        className="p-0.5 hover:bg-muted rounded"
+        className="p-0.5 hover:bg-muted rounded-lg"
         aria-label="Fermer"
       >
         <X className="h-3.5 w-3.5" />
