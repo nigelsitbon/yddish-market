@@ -12,11 +12,11 @@ export const maxDuration = 60;
 
 const BUCKET = "products";
 
-/** Output canvas size */
-const CANVAS_SIZE = 1024;
+/** Minimum canvas size (for very small images) */
+const MIN_CANVAS = 1024;
 
-/** Padding around the product (% of canvas) */
-const PADDING_RATIO = 0.08;
+/** Padding around the product (% of largest dimension) */
+const PADDING_RATIO = 0.06;
 
 export async function POST(req: Request) {
   const t0 = Date.now();
@@ -116,78 +116,67 @@ export async function POST(req: Request) {
     log("COMPOSITE", "building studio packshot...");
 
     try {
-      const productImage = sharp(transparentBuffer);
-      const metadata = await productImage.metadata();
-      const origW = metadata.width || CANVAS_SIZE;
-      const origH = metadata.height || CANVAS_SIZE;
+      const metadata = await sharp(transparentBuffer).metadata();
+      const origW = metadata.width || MIN_CANVAS;
+      const origH = metadata.height || MIN_CANVAS;
       log("COMPOSITE", "product dimensions:", origW, "x", origH);
 
-      // Calculate product size to fit within canvas with padding
-      const padding = Math.round(CANVAS_SIZE * PADDING_RATIO);
-      const maxProductW = CANVAS_SIZE - padding * 2;
-      const maxProductH = CANVAS_SIZE - padding * 2;
+      // Canvas adapts to product size — square, based on largest dimension + padding
+      const maxDim = Math.max(origW, origH);
+      const padding = Math.round(maxDim * PADDING_RATIO);
+      const canvasSize = Math.max(maxDim + padding * 2, MIN_CANVAS);
+      log("COMPOSITE", "canvas:", canvasSize, "x", canvasSize, "padding:", padding);
 
-      const scale = Math.min(maxProductW / origW, maxProductH / origH, 1);
-      const productW = Math.round(origW * scale);
-      const productH = Math.round(origH * scale);
+      // Product keeps its original size — only scale UP if smaller than MIN_CANVAS
+      const productW = origW;
+      const productH = origH;
 
       // Center the product on canvas
-      const left = Math.round((CANVAS_SIZE - productW) / 2);
-      const top = Math.round((CANVAS_SIZE - productH) / 2);
+      const left = Math.round((canvasSize - productW) / 2);
+      const top = Math.round((canvasSize - productH) / 2);
 
-      // Resize product to target size (keeping transparency)
-      const resizedProduct = await sharp(transparentBuffer)
-        .resize(productW, productH, { fit: "inside", background: { r: 0, g: 0, b: 0, alpha: 0 } })
+      // Ensure product has clean alpha channel
+      const cleanProduct = await sharp(transparentBuffer)
+        .ensureAlpha()
         .png()
         .toBuffer();
 
-      // Create a subtle shadow: blurred, darkened copy of the product, offset down
-      const shadowOffset = Math.round(productH * 0.02);
-      const shadowBlur = Math.max(8, Math.round(productH * 0.03));
+      // Create a subtle shadow: blurred, darkened silhouette offset down
+      const shadowOffset = Math.round(productH * 0.015);
+      const shadowBlur = Math.max(10, Math.round(maxDim * 0.02));
 
-      // Create shadow layer: extract alpha from product, make it semi-transparent dark
-      const shadowLayer = await sharp(resizedProduct)
+      const shadowLayer = await sharp(cleanProduct)
         .ensureAlpha()
-        .modulate({ brightness: 0 }) // Make all pixels black
+        .modulate({ brightness: 0 })
         .blur(shadowBlur)
         .composite([
           {
             input: Buffer.from(
               `<svg width="${productW}" height="${productH}">
-                <rect width="100%" height="100%" fill="rgba(0,0,0,0.12)"/>
+                <rect width="100%" height="100%" fill="rgba(0,0,0,0.10)"/>
               </svg>`
             ),
-            blend: "dest-in", // Keep only where original alpha exists
+            blend: "dest-in",
           },
         ])
         .png()
         .toBuffer();
 
-      // Build the final studio image
+      // Build the final studio image — product at full resolution
       const studioImage = await sharp({
         create: {
-          width: CANVAS_SIZE,
-          height: CANVAS_SIZE,
+          width: canvasSize,
+          height: canvasSize,
           channels: 3,
           background: { r: 255, g: 255, b: 255 },
         },
       })
         .png()
         .composite([
-          // Shadow (slightly offset down)
-          {
-            input: shadowLayer,
-            left,
-            top: top + shadowOffset,
-          },
-          // Product (sharp, on top)
-          {
-            input: resizedProduct,
-            left,
-            top,
-          },
+          { input: shadowLayer, left, top: top + shadowOffset },
+          { input: cleanProduct, left, top },
         ])
-        .png({ quality: 90, compressionLevel: 6 })
+        .png({ compressionLevel: 6 })
         .toBuffer();
 
       log("COMPOSITE", "studio image:", (studioImage.byteLength / 1024).toFixed(0), "KB");
