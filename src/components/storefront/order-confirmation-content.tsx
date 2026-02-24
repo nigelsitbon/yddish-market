@@ -199,8 +199,15 @@ export function OrderConfirmationContent() {
       {/* Actions */}
       <div className="flex flex-col sm:flex-row gap-3">
         <Link
-          href="/"
+          href="/account/orders"
           className="flex items-center justify-center gap-2 h-12 px-8 btn-gradient-dark text-[#FFFFFF] text-[13px] tracking-wide transition-all duration-200 shadow-sm hover:shadow-md rounded-xl"
+        >
+          <Package size={16} strokeWidth={1.5} />
+          Suivre ma commande
+        </Link>
+        <Link
+          href="/"
+          className="flex items-center justify-center gap-2 h-12 px-8 border border-foreground/20 text-foreground text-[13px] tracking-wide rounded-xl hover:bg-foreground/5 transition-all duration-200"
         >
           Continuer mes achats
           <ArrowRight size={16} strokeWidth={1.5} />

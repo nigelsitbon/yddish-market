@@ -12,6 +12,7 @@ import {
   X,
   LayoutDashboard,
   Shield,
+  Package,
 } from "@/components/ui/icons";
 import { useState, useEffect, useRef } from "react";
 import { useCartStore } from "@/stores/cart";
@@ -284,6 +285,14 @@ export function Header() {
             <div className="pt-4 mt-4 border-t border-border space-y-1">
               {isSignedIn ? (
                 <>
+                  <Link
+                    href="/account/orders"
+                    className="flex items-center gap-2 py-2.5 text-[13px] tracking-wide text-muted-foreground"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <Package size={14} strokeWidth={1.5} />
+                    Mes commandes
+                  </Link>
                   <Link
                     href="/account/favorites"
                     className="flex items-center gap-2 py-2.5 text-[13px] tracking-wide text-muted-foreground"

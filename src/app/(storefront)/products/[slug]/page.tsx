@@ -2,8 +2,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { ImageGallery } from "@/components/storefront/image-gallery";
-import { AddToCartButton } from "@/components/storefront/add-to-cart-button";
-import { FavoriteButton } from "@/components/storefront/favorite-button";
+import { VariantSelector } from "@/components/storefront/variant-selector";
+import { ReviewForm } from "@/components/storefront/review-form";
 import { ProductCard } from "@/components/storefront/product-card";
 import { formatPrice } from "@/lib/utils";
 import { Star, Package, Truck, Check, Shield } from "@/components/ui/icons";
@@ -279,55 +279,20 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
               </div>
             )}
 
-            {/* Variants */}
-            {product.variants.length > 0 && (
-              <div className="mt-7">
-                <p className="text-[11px] tracking-[0.1em] uppercase text-muted-foreground mb-3">
-                  Variante
-                </p>
-                <div className="flex flex-wrap gap-2">
-                  {product.variants.map((v, i) => (
-                    <button
-                      key={v.id}
-                      type="button"
-                      className={`px-4 py-2 text-[12px] border transition-all duration-200 rounded-lg ${
-                        i === 0
-                          ? "border-foreground text-foreground bg-foreground/5"
-                          : "border-border text-muted-foreground hover:border-foreground hover:text-foreground"
-                      }`}
-                    >
-                      {v.name}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Divider */}
-            <div className="h-px bg-border/60 my-7" />
-
-            {/* Add to cart + Favorite */}
-            <div className="flex items-center gap-3">
-              <div className="flex-1">
-                <AddToCartButton productId={product.id} />
-              </div>
-              <div className="w-[52px] h-[52px] border border-border/60 rounded-xl flex items-center justify-center hover:border-foreground/30 transition-colors">
-                <FavoriteButton productId={product.id} size="md" />
-              </div>
+            {/* Variants + Add to cart (interactive client component) */}
+            <div className="mt-7">
+              <VariantSelector
+                productId={product.id}
+                basePrice={product.price}
+                baseStock={product.stock}
+                variants={product.variants.map((v) => ({
+                  id: v.id,
+                  name: v.name,
+                  price: v.price,
+                  stock: v.stock,
+                }))}
+              />
             </div>
-
-            {/* Stock indicator */}
-            <p className="text-[12px] mt-3">
-              {product.stock > 0 ? (
-                product.stock <= 3 ? (
-                  <span className="text-sale font-medium">Plus que {product.stock} en stock</span>
-                ) : (
-                  <span className="text-muted-foreground">En stock — Expédié sous {product.seller.handlingDays} jour{product.seller.handlingDays > 1 ? "s" : ""}</span>
-                )
-              ) : (
-                <span className="text-sale font-medium">Rupture de stock</span>
-              )}
-            </p>
 
             {/* Trust badges */}
             <div className="flex items-center gap-5 mt-5 py-4 border-t border-border/40">
@@ -404,18 +369,27 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
       )}
 
       {/* ═══ Reviews ═══ */}
-      {product.reviews.length > 0 && (
-        <section className="border-t border-border/40">
-          <div className="mx-auto max-w-[1440px] px-4 sm:px-8 lg:px-12 py-12 lg:py-16">
-            <div className="flex items-center justify-between mb-8">
-              <h2 className="text-[11px] font-medium tracking-[0.15em] uppercase text-muted-foreground">
-                Avis clients ({product._count.reviews})
-              </h2>
+      <section className="border-t border-border/40">
+        <div className="mx-auto max-w-[1440px] px-4 sm:px-8 lg:px-12 py-12 lg:py-16">
+          <div className="flex items-center justify-between mb-8">
+            <h2 className="text-[11px] font-medium tracking-[0.15em] uppercase text-muted-foreground">
+              Avis clients ({product._count.reviews})
+            </h2>
+            {averageRating > 0 && (
               <div className="flex items-center gap-2">
                 <Stars rating={averageRating} size={14} />
                 <span className="text-[13px] text-foreground font-medium">{averageRating.toFixed(1)}/5</span>
               </div>
-            </div>
+            )}
+          </div>
+
+          {/* Review form */}
+          <div className="max-w-2xl mb-8">
+            <ReviewForm productId={product.id} />
+          </div>
+
+          {/* Existing reviews */}
+          {product.reviews.length > 0 && (
             <div className="space-y-0 max-w-2xl divide-y divide-border/40">
               {product.reviews.map((review) => (
                 <div key={review.id} className="py-6 first:pt-0">
@@ -425,6 +399,11 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
                       <span className="text-[13px] font-medium text-foreground">
                         {review.user.name || "Anonyme"}
                       </span>
+                      {review.verified && (
+                        <span className="text-[9px] font-medium text-accent bg-accent/8 px-2 py-0.5 rounded-full border border-accent/15">
+                          Achat vérifié
+                        </span>
+                      )}
                     </div>
                     <span className="text-[11px] text-muted-foreground">
                       {new Date(review.createdAt).toLocaleDateString("fr-FR")}
@@ -436,9 +415,9 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
                 </div>
               ))}
             </div>
-          </div>
-        </section>
-      )}
+          )}
+        </div>
+      </section>
 
       {/* ═══ Related products ═══ */}
       {relatedProducts.length > 0 && (

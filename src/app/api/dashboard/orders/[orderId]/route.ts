@@ -4,6 +4,7 @@ import { getCurrentUser } from "@/lib/auth";
 import { updateOrderItemStatusSchema } from "@/lib/validators/order";
 import { createPayout } from "@/lib/payouts";
 import { getTrackingUrl } from "@/lib/carriers";
+import { sendShippingNotificationEmail } from "@/lib/emails";
 
 /* ── PATCH /api/dashboard/orders/[orderId] — Mettre à jour le statut ── */
 export async function PATCH(
@@ -55,7 +56,34 @@ export async function PATCH(
     const updated = await prisma.orderItem.update({
       where: { id: orderItemId },
       data: updateData,
+      include: {
+        order: {
+          include: {
+            buyer: { select: { email: true, name: true } },
+          },
+        },
+        product: { select: { title: true } },
+        seller: { select: { shopName: true } },
+      },
     });
+
+    // Send shipping notification email when shipped
+    if (status === "SHIPPED") {
+      try {
+        await sendShippingNotificationEmail({
+          buyerEmail: updated.order.buyer.email,
+          buyerName: updated.order.buyer.name || "Client",
+          orderNumber: updated.order.orderNumber,
+          sellerName: updated.seller.shopName,
+          productTitle: updated.product.title,
+          carrier: updated.carrier,
+          trackingUrl: updated.trackingUrl,
+          trackingNumber: updated.trackingNumber,
+        });
+      } catch (emailErr) {
+        console.error("[SHIPPING_EMAIL_ERROR]", emailErr);
+      }
+    }
 
     // Trigger payout when order is delivered
     if (status === "DELIVERED") {

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { sendOrderConfirmationEmail, sendSellerNewOrderEmail } from "@/lib/emails";
 import Stripe from "stripe";
 
 export async function POST(req: Request) {
@@ -44,10 +45,19 @@ export async function POST(req: Request) {
             stripePaymentId: session.id,
           },
           include: {
+            buyer: { select: { email: true, name: true } },
+            address: true,
             items: {
               include: {
-                product: true,
-                variant: true,
+                product: { select: { title: true } },
+                variant: { select: { name: true } },
+                seller: {
+                  select: {
+                    id: true,
+                    shopName: true,
+                    user: { select: { email: true } },
+                  },
+                },
               },
             },
           },
@@ -93,7 +103,59 @@ export async function POST(req: Request) {
           await prisma.cartItem.deleteMany({ where: { userId } });
         }
 
-        console.log(`[STRIPE_WEBHOOK] Order ${order.orderNumber} confirmed`);
+        // ── Send confirmation email to buyer ──
+        await sendOrderConfirmationEmail({
+          buyerEmail: order.buyer.email,
+          buyerName: order.buyer.name || "Client",
+          orderNumber: order.orderNumber,
+          orderId: order.id,
+          items: order.items.map((item) => ({
+            title: item.product.title,
+            quantity: item.quantity,
+            unitPrice: item.unitPrice,
+            subtotal: item.subtotal,
+            sellerName: item.seller.shopName,
+            variantName: item.variant?.name,
+          })),
+          subtotal: order.subtotal,
+          shippingTotal: order.shippingTotal,
+          total: order.total,
+          address: {
+            firstName: order.address.firstName,
+            lastName: order.address.lastName,
+            street: order.address.street,
+            street2: order.address.street2,
+            city: order.address.city,
+            zip: order.address.zip,
+            country: order.address.country,
+          },
+        });
+
+        // ── Send notification to each seller ──
+        const sellerGroups = new Map<string, typeof order.items>();
+        for (const item of order.items) {
+          const group = sellerGroups.get(item.sellerId) || [];
+          group.push(item);
+          sellerGroups.set(item.sellerId, group);
+        }
+
+        for (const [, items] of sellerGroups) {
+          const seller = items[0].seller;
+          await sendSellerNewOrderEmail({
+            sellerEmail: seller.user.email,
+            sellerName: seller.shopName,
+            orderNumber: order.orderNumber,
+            items: items.map((item) => ({
+              title: item.product.title,
+              quantity: item.quantity,
+              unitPrice: item.unitPrice,
+              variantName: item.variant?.name,
+            })),
+            buyerCity: order.address.city,
+          });
+        }
+
+        console.log(`[STRIPE_WEBHOOK] Order ${order.orderNumber} confirmed + emails sent`);
         break;
       }
 
