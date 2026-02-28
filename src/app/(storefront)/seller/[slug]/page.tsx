@@ -36,6 +36,7 @@ const getSellerProducts = unstable_cache(
     const rawProducts = await prisma.product.findMany({
       where: { sellerId, status: "ACTIVE" },
       select: {
+        id: true,
         slug: true,
         title: true,
         price: true,

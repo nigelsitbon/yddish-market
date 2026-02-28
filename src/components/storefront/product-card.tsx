@@ -3,11 +3,12 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Heart } from "@/components/ui/icons";
 import { formatPrice } from "@/lib/utils";
+import { FavoriteButton } from "@/components/storefront/favorite-button";
 
 export type ProductCardData = {
   slug: string;
+  id?: string;
   title: string;
   price: number;
   comparePrice?: number | null;
@@ -41,7 +42,12 @@ function PlaceholderImage() {
   );
 }
 
-export function ProductCard({ product }: { product: ProductCardData }) {
+type ProductCardProps = {
+  product: ProductCardData;
+  isFavorited?: boolean;
+};
+
+export function ProductCard({ product, isFavorited = false }: ProductCardProps) {
   const [imgError, setImgError] = useState(false);
   const imageUrl = getRealImage(product.images);
   const hasImage = !!imageUrl && !imgError;
@@ -65,17 +71,18 @@ export function ProductCard({ product }: { product: ProductCardData }) {
         )}
 
         {/* Favorite button */}
-        <button
-          type="button"
-          className="absolute top-3 right-3 z-10 p-2 rounded-full bg-[#FFFFFF]/80 backdrop-blur-sm text-muted-foreground hover:text-foreground hover:bg-[#FFFFFF] shadow-sm hover:shadow-md transition-all duration-200"
-          onClick={(e) => {
-            e.preventDefault();
-            // TODO: toggle favorite
-          }}
-          aria-label="Ajouter aux favoris"
-        >
-          <Heart size={16} strokeWidth={1.5} />
-        </button>
+        {product.id && (
+          <div
+            className="absolute top-3 right-3 z-10 rounded-full bg-[#FFFFFF]/80 backdrop-blur-sm shadow-sm hover:shadow-md hover:bg-[#FFFFFF] transition-all duration-200"
+            onClick={(e) => e.preventDefault()}
+          >
+            <FavoriteButton
+              productId={product.id}
+              initialFavorited={isFavorited}
+              size="sm"
+            />
+          </div>
+        )}
 
         {/* Discount badge */}
         {hasDiscount && (

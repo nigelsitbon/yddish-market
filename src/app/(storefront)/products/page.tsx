@@ -103,6 +103,7 @@ const getProducts = unstable_cache(async (params: {
     prisma.product.findMany({
       where,
       select: {
+        id: true,
         slug: true,
         title: true,
         price: true,

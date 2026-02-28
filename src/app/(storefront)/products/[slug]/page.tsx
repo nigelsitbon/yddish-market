@@ -56,6 +56,7 @@ const getRelatedProducts = unstable_cache(
         status: "ACTIVE",
       },
       select: {
+        id: true,
         slug: true,
         title: true,
         price: true,
@@ -431,6 +432,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
                 <ProductCard
                   key={p.slug}
                   product={{
+                    id: p.id,
                     slug: p.slug,
                     title: p.title,
                     price: p.price,
