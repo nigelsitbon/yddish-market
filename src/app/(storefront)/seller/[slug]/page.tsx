@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { ProductCard, type ProductCardData } from "@/components/storefront/product-card";
@@ -111,12 +112,19 @@ export default async function SellerPage({
   return (
     <div>
       {/* Banner */}
-      <div className="relative h-[200px] lg:h-[280px] bg-[#E8E4DE]">
-        <div className="absolute inset-0 flex items-center justify-center">
-          <span className="text-xs text-[#A09A90] tracking-[0.3em] uppercase">
-            Banner image
-          </span>
-        </div>
+      <div className="relative h-[200px] lg:h-[280px] overflow-hidden">
+        {seller.banner ? (
+          <Image
+            src={seller.banner}
+            alt={`Bannière ${seller.shopName}`}
+            fill
+            sizes="100vw"
+            className="object-cover"
+            priority
+          />
+        ) : (
+          <div className="absolute inset-0 bg-gradient-to-br from-[#F5F1EB] via-[#EDE8E0] to-[#E5DFD5]" />
+        )}
       </div>
 
       {/* Seller info */}
@@ -124,10 +132,22 @@ export default async function SellerPage({
         <div className="relative -mt-12 mb-8">
           <div className="flex items-end gap-6">
             {/* Avatar */}
-            <div className="w-24 h-24 bg-white border border-border flex items-center justify-center shadow-sm rounded-2xl">
-              <span className="text-[24px] font-light text-muted-foreground">
-                {seller.shopName.charAt(0)}
-              </span>
+            <div className="w-24 h-24 bg-white border border-border shadow-sm rounded-2xl overflow-hidden relative">
+              {seller.logo ? (
+                <Image
+                  src={seller.logo}
+                  alt={seller.shopName}
+                  fill
+                  sizes="96px"
+                  className="object-cover"
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#F5F1EB] to-[#EBEBEB]">
+                  <span className="text-[28px] font-extralight text-muted-foreground/80 tracking-wide">
+                    {seller.shopName.charAt(0).toUpperCase()}
+                  </span>
+                </div>
+              )}
             </div>
             <div className="pb-1">
               <div className="flex items-center gap-3">

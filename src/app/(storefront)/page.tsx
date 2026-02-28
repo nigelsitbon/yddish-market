@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
 import { ProductCard, type ProductCardData } from "@/components/storefront/product-card";
 import { CatalogFilters } from "@/components/storefront/catalog-filters";
+import { HeroBanner } from "@/components/storefront/hero-banner";
 import { unstable_cache } from "next/cache";
 import { OrganizationJsonLd, WebSiteJsonLd } from "@/components/seo/json-ld";
 
@@ -167,11 +168,16 @@ export default async function HomePage({
     ? `Résultats pour "${q}"`
     : categoryName ?? "Tous les produits";
 
+  const isCleanHomepage = !category && !q && !price && !sort && page <= 1;
+
   return (
-    <div className="mx-auto max-w-[1440px] px-4 sm:px-8 lg:px-12">
-      {/* SEO: Structured Data */}
-      <OrganizationJsonLd />
-      <WebSiteJsonLd />
+    <>
+      {isCleanHomepage && <HeroBanner />}
+
+      <div className="mx-auto max-w-[1440px] px-4 sm:px-8 lg:px-12">
+        {/* SEO: Structured Data */}
+        <OrganizationJsonLd />
+        <WebSiteJsonLd />
 
       {/* Header */}
       <div className="pt-6 pb-2">
@@ -258,6 +264,7 @@ export default async function HomePage({
           )}
         </div>
       )}
-    </div>
+      </div>
+    </>
   );
 }
