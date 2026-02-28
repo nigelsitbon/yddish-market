@@ -14,8 +14,9 @@ import {
   Shield,
   Package,
 } from "@/components/ui/icons";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useCartStore } from "@/stores/cart";
+import { SearchAutocomplete } from "./search-autocomplete";
 
 const navigation = [
   { name: "Nouveautés", href: "/?sort=newest" },
@@ -39,20 +40,9 @@ export function Header() {
   const { isSignedIn } = useUser();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
-  const searchInputRef = useRef<HTMLInputElement>(null);
   const cartItemCount = useCartStore((s) => s.itemCount());
   const setCartOpen = useCartStore((s) => s.setOpen);
   const [userCtx, setUserCtx] = useState<UserContext>(null);
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    const q = searchQuery.trim();
-    if (!q) return;
-    router.push(`/?q=${encodeURIComponent(q)}`);
-    setSearchOpen(false);
-    setSearchQuery("");
-  };
 
   // Fetch user context (role, seller status) when signed in
   useEffect(() => {
@@ -203,35 +193,11 @@ export function Header() {
         </div>
       </div>
 
-      {/* Search bar - expandable */}
+      {/* Search bar - expandable with autocomplete */}
       {searchOpen && (
         <div className="border-b border-border bg-white">
           <div className="mx-auto max-w-[1440px] px-4 sm:px-8 lg:px-12 py-4">
-            <form onSubmit={handleSearch} className="relative max-w-2xl mx-auto">
-              <Search size={18} strokeWidth={1.5} className="absolute left-0 top-1/2 -translate-y-1/2 text-muted-foreground" />
-              <input
-                ref={searchInputRef}
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Que recherchez-vous ?"
-                aria-label="Rechercher un produit"
-                className="w-full h-10 pl-8 pr-10 bg-muted/50 text-sm rounded-xl border-0 focus:outline-none focus:ring-2 focus:ring-accent/20 placeholder:text-muted-foreground transition-all"
-                autoFocus
-              />
-              {searchQuery && (
-                <button
-                  type="button"
-                  onClick={() => {
-                    setSearchQuery("");
-                    searchInputRef.current?.focus();
-                  }}
-                  className="absolute right-0 top-1/2 -translate-y-1/2 p-1 text-muted-foreground hover:text-foreground"
-                >
-                  <X size={16} strokeWidth={1.5} />
-                </button>
-              )}
-            </form>
+            <SearchAutocomplete onClose={() => setSearchOpen(false)} />
           </div>
         </div>
       )}

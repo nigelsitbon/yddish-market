@@ -372,20 +372,53 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
       {/* ═══ Reviews ═══ */}
       <section className="border-t border-border/40">
         <div className="mx-auto max-w-[1440px] px-4 sm:px-8 lg:px-12 py-12 lg:py-16">
-          <div className="flex items-center justify-between mb-8">
-            <h2 className="text-[11px] font-medium tracking-[0.15em] uppercase text-muted-foreground">
-              Avis clients ({product._count.reviews})
-            </h2>
-            {averageRating > 0 && (
-              <div className="flex items-center gap-2">
-                <Stars rating={averageRating} size={14} />
-                <span className="text-[13px] text-foreground font-medium">{averageRating.toFixed(1)}/5</span>
+          <h2 className="text-[11px] font-medium tracking-[0.15em] uppercase text-muted-foreground mb-8">
+            Avis clients ({product._count.reviews})
+          </h2>
+
+          {/* Rating summary */}
+          {product.reviews.length > 0 && (
+            <div className="flex items-start gap-8 mb-10 max-w-2xl">
+              {/* Average score */}
+              <div className="text-center shrink-0">
+                <p className="text-[36px] font-light text-foreground leading-none">
+                  {averageRating.toFixed(1)}
+                </p>
+                <Stars rating={averageRating} size={13} />
+                <p className="text-[11px] text-muted-foreground mt-1">
+                  {product._count.reviews} avis
+                </p>
               </div>
-            )}
-          </div>
+              {/* Distribution bars */}
+              <div className="flex-1 space-y-1.5">
+                {[5, 4, 3, 2, 1].map((star) => {
+                  const count = product.reviews.filter((r) => r.rating === star).length;
+                  const pct = product.reviews.length > 0 ? (count / product.reviews.length) * 100 : 0;
+                  return (
+                    <div key={star} className="flex items-center gap-2">
+                      <span className="text-[11px] text-muted-foreground w-4 text-right shrink-0">{star}</span>
+                      <Star size={10} strokeWidth={1.5} className="text-foreground/30 shrink-0" />
+                      <div className="flex-1 h-[6px] bg-border/40 rounded-full overflow-hidden">
+                        <div
+                          className="h-full bg-foreground/70 rounded-full transition-all duration-500"
+                          style={{ width: `${pct}%` }}
+                        />
+                      </div>
+                      <span className="text-[11px] text-muted-foreground w-6 shrink-0">{count}</span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
 
           {/* Review form */}
           <div className="max-w-2xl mb-8">
+            {product.reviews.length === 0 && (
+              <p className="text-[13px] text-muted-foreground mb-4">
+                Aucun avis pour le moment. Partagez votre expérience !
+              </p>
+            )}
             <ReviewForm productId={product.id} />
           </div>
 

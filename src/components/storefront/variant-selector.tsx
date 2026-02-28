@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { AddToCartButton } from "./add-to-cart-button";
 import { FavoriteButton } from "./favorite-button";
+import { Minus, Plus } from "@/components/ui/icons";
 import { formatPrice } from "@/lib/utils";
 
 type Variant = {
@@ -23,11 +24,13 @@ export function VariantSelector({ productId, basePrice, baseStock, variants }: V
   const [selectedId, setSelectedId] = useState<string | null>(
     variants.length > 0 ? variants[0].id : null
   );
+  const [quantity, setQuantity] = useState(1);
 
   const selected = variants.find((v) => v.id === selectedId);
   const currentPrice = selected?.price ?? basePrice;
   const currentStock = selected ? selected.stock : baseStock;
   const isOutOfStock = currentStock <= 0;
+  const maxQty = Math.min(currentStock, 10);
 
   return (
     <div>
@@ -45,7 +48,7 @@ export function VariantSelector({ productId, basePrice, baseStock, variants }: V
                 <button
                   key={v.id}
                   type="button"
-                  onClick={() => setSelectedId(v.id)}
+                  onClick={() => { setSelectedId(v.id); setQuantity(1); }}
                   disabled={outOfStock}
                   className={`px-4 py-2 text-[12px] border transition-all duration-200 rounded-lg ${
                     outOfStock
@@ -71,13 +74,39 @@ export function VariantSelector({ productId, basePrice, baseStock, variants }: V
       {/* Divider */}
       <div className="h-px bg-border/60 mb-7" />
 
-      {/* Add to cart + Favorite */}
+      {/* Quantity + Add to cart + Favorite */}
       <div className="flex items-center gap-3">
+        {/* Quantity selector */}
+        <div className="flex items-center h-[52px] border border-border/60 rounded-xl overflow-hidden">
+          <button
+            type="button"
+            onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+            disabled={isOutOfStock || quantity <= 1}
+            className="w-10 h-full flex items-center justify-center text-muted-foreground hover:text-foreground disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+            aria-label="Réduire la quantité"
+          >
+            <Minus size={14} strokeWidth={1.5} />
+          </button>
+          <span className="w-8 text-center text-[13px] font-medium text-foreground tabular-nums select-none">
+            {quantity}
+          </span>
+          <button
+            type="button"
+            onClick={() => setQuantity((q) => Math.min(maxQty, q + 1))}
+            disabled={isOutOfStock || quantity >= maxQty}
+            className="w-10 h-full flex items-center justify-center text-muted-foreground hover:text-foreground disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+            aria-label="Augmenter la quantité"
+          >
+            <Plus size={14} strokeWidth={1.5} />
+          </button>
+        </div>
+
         <div className="flex-1">
           <AddToCartButton
             productId={productId}
             variantId={selectedId || undefined}
             disabled={isOutOfStock}
+            quantity={quantity}
           />
         </div>
         <div className="w-[52px] h-[52px] border border-border/60 rounded-xl flex items-center justify-center hover:border-foreground/30 transition-colors">
