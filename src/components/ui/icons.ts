@@ -15,6 +15,7 @@ export {
   LayoutDashboard,
   Loader2,
   Lock,
+  Maximize2,
   Menu,
   Minus,
   Package,
