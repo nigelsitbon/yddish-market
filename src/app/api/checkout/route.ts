@@ -274,6 +274,9 @@ export async function POST(req: Request) {
           orderId: order.id,
           userId: user.id,
         },
+        payment_intent_data: {
+          transfer_group: order.id,
+        },
         success_url: `${appUrl}/checkout/confirmation?order=${order.id}&session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${appUrl}/cart`,
       });

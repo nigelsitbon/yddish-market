@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
+import { createPayout } from "@/lib/payouts";
 
 /* ── GET /api/dashboard/payouts — Liste des versements vendeur ── */
 export async function GET(req: Request) {
@@ -77,6 +78,65 @@ export async function GET(req: Request) {
     });
   } catch (error) {
     console.error("[DASHBOARD_PAYOUTS_GET]", error);
+    return NextResponse.json({ success: false, error: "Erreur serveur" }, { status: 500 });
+  }
+}
+
+/* ── POST /api/dashboard/payouts — Relancer les payouts PENDING/FAILED ── */
+export async function POST() {
+  try {
+    const user = await getCurrentUser();
+    if (!user?.sellerProfile) {
+      return NextResponse.json({ success: false, error: "Non autorisé" }, { status: 403 });
+    }
+
+    // Find retryable payouts for this seller
+    const retryablePayouts = await prisma.payout.findMany({
+      where: {
+        sellerId: user.sellerProfile.id,
+        status: { in: ["PENDING", "FAILED"] },
+      },
+      select: { id: true, orderItemId: true },
+    });
+
+    if (retryablePayouts.length === 0) {
+      return NextResponse.json({
+        success: true,
+        data: { retried: 0, message: "Aucun versement à relancer" },
+      });
+    }
+
+    // Delete old PENDING/FAILED payouts so createPayout can recreate them
+    await prisma.payout.deleteMany({
+      where: {
+        id: { in: retryablePayouts.map((p) => p.id) },
+        status: { in: ["PENDING", "FAILED"] },
+      },
+    });
+
+    let succeeded = 0;
+    let failed = 0;
+
+    for (const p of retryablePayouts) {
+      try {
+        await createPayout(p.orderItemId);
+        succeeded++;
+      } catch (err) {
+        console.error(`[PAYOUTS_RETRY] Failed for orderItem ${p.orderItemId}:`, err);
+        failed++;
+      }
+    }
+
+    return NextResponse.json({
+      success: true,
+      data: {
+        retried: retryablePayouts.length,
+        succeeded,
+        failed,
+      },
+    });
+  } catch (error) {
+    console.error("[DASHBOARD_PAYOUTS_POST]", error);
     return NextResponse.json({ success: false, error: "Erreur serveur" }, { status: 500 });
   }
 }

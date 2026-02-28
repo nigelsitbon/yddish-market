@@ -1,12 +1,17 @@
 import { prisma } from "@/lib/prisma";
 
 /**
- * Create a payout for a delivered order item.
- * - If Stripe is configured and the seller is onboarded, create a Stripe Transfer.
- * - If Stripe is not configured (demo mode), mark as COMPLETED directly.
- * - If the seller is not onboarded, mark as PENDING for later processing.
+ * Create a payout (Stripe Transfer) for an order item.
+ * Called immediately after checkout.session.completed.
+ *
+ * - If Stripe is configured and the seller is onboarded → create a Stripe Transfer.
+ * - If Stripe is not configured (demo mode) → mark as COMPLETED directly.
+ * - If the seller is not onboarded → mark as PENDING for later retry.
+ *
+ * @param orderItemId - The order item to pay out
+ * @param chargeId - Optional Stripe charge ID for source_transaction linking
  */
-export async function createPayout(orderItemId: string) {
+export async function createPayout(orderItemId: string, chargeId?: string) {
   // Fetch order item with seller info
   const orderItem = await prisma.orderItem.findUnique({
     where: { id: orderItemId },
@@ -17,9 +22,17 @@ export async function createPayout(orderItemId: string) {
           stripeAccountId: true,
           stripeOnboarded: true,
           commission: true,
+          shopName: true,
         },
       },
-      order: { select: { stripePaymentId: true } },
+      order: {
+        select: {
+          id: true,
+          orderNumber: true,
+          stripePaymentId: true,
+          stripeChargeId: true,
+        },
+      },
     },
   });
 
@@ -47,7 +60,7 @@ export async function createPayout(orderItemId: string) {
   const hasStripe = !!stripeKey && stripeKey.length > 10;
   const sellerOnboarded = orderItem.seller.stripeOnboarded && !!orderItem.seller.stripeAccountId;
 
-  // Case 1: Seller not onboarded → PENDING (will be processed later or manually)
+  // Case 1: Seller not onboarded → PENDING (will be processed later via retry)
   if (!sellerOnboarded) {
     const payout = await prisma.payout.create({
       data: {
@@ -87,12 +100,32 @@ export async function createPayout(orderItemId: string) {
     // Amount in cents
     const amountCents = Math.round(netAmount * 100);
 
+    if (amountCents <= 0) {
+      console.log(`[PAYOUT] Skipped — net amount is 0 or negative for orderItem ${orderItemId}`);
+      const payout = await prisma.payout.create({
+        data: {
+          orderItemId,
+          sellerId: orderItem.seller.id,
+          amount: netAmount,
+          commission,
+          shippingAmount,
+          status: "COMPLETED",
+          failureReason: "Net amount zero — commission covers full amount",
+        },
+      });
+      return payout;
+    }
+
+    // Use chargeId from parameter, or fall back to order's stored chargeId
+    const sourceTransaction = chargeId || orderItem.order.stripeChargeId || undefined;
+
     const transfer = await stripe.transfers.create({
       amount: amountCents,
       currency: "eur",
       destination: orderItem.seller.stripeAccountId!,
-      transfer_group: orderItem.orderId,
-      description: `Payout for order item ${orderItemId}`,
+      transfer_group: orderItem.order.id,
+      description: `YDDISH MARKET — Commande ${orderItem.order.orderNumber} — ${orderItem.seller.shopName}`,
+      ...(sourceTransaction ? { source_transaction: sourceTransaction } : {}),
     });
 
     const payout = await prisma.payout.create({
@@ -106,7 +139,7 @@ export async function createPayout(orderItemId: string) {
         status: "COMPLETED",
       },
     });
-    console.log(`[PAYOUT] Transfer ${transfer.id} created for orderItem ${orderItemId}`);
+    console.log(`[PAYOUT] Transfer ${transfer.id} → ${orderItem.seller.shopName} (${netAmount}€) for order ${orderItem.order.orderNumber}`);
     return payout;
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown error";

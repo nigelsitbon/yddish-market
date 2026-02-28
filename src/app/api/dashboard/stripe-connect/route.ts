@@ -32,6 +32,7 @@ export async function POST() {
         country: user.sellerProfile.shipsFrom || "FR",
         email: user.email,
         capabilities: {
+          card_payments: { requested: true },
           transfers: { requested: true },
         },
         business_profile: {

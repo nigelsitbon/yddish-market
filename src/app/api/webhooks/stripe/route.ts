@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { sendOrderConfirmationEmail, sendSellerNewOrderEmail } from "@/lib/emails";
+import { createPayout } from "@/lib/payouts";
 import Stripe from "stripe";
 
 export async function POST(req: Request) {
@@ -37,12 +38,32 @@ export async function POST(req: Request) {
           break;
         }
 
-        // Update order status to CONFIRMED
+        // Retrieve the charge ID from the PaymentIntent for source_transaction
+        let chargeId: string | undefined;
+        if (session.payment_intent) {
+          try {
+            const pi = await stripe.paymentIntents.retrieve(
+              session.payment_intent as string,
+              { expand: ["latest_charge"] }
+            );
+            const charge = pi.latest_charge;
+            if (charge && typeof charge === "object" && "id" in charge) {
+              chargeId = charge.id;
+            } else if (typeof charge === "string") {
+              chargeId = charge;
+            }
+          } catch (err) {
+            console.error("[STRIPE_WEBHOOK] Failed to retrieve charge:", err);
+          }
+        }
+
+        // Update order status to CONFIRMED + store charge ID
         const order = await prisma.order.update({
           where: { id: orderId },
           data: {
             status: "CONFIRMED",
             stripePaymentId: session.id,
+            stripeChargeId: chargeId ?? null,
           },
           include: {
             buyer: { select: { email: true, name: true } },
@@ -155,7 +176,16 @@ export async function POST(req: Request) {
           });
         }
 
-        console.log(`[STRIPE_WEBHOOK] Order ${order.orderNumber} confirmed + emails sent`);
+        // ── Create transfers to sellers (split payment) ──
+        for (const item of order.items) {
+          try {
+            await createPayout(item.id, chargeId);
+          } catch (err) {
+            console.error(`[STRIPE_WEBHOOK] Payout failed for item ${item.id}:`, err);
+          }
+        }
+
+        console.log(`[STRIPE_WEBHOOK] Order ${order.orderNumber} confirmed + emails sent + payouts initiated`);
         break;
       }
 
