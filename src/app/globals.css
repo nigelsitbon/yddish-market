@@ -69,6 +69,7 @@ a {
 /* Gradient button utilities */
 .btn-gradient-dark {
   background: linear-gradient(to bottom, #2C2C2C, #1A1A1A);
+  color: #FFFFFF !important;
 }
 .btn-gradient-dark:hover {
   background: linear-gradient(to bottom, #3A3A3A, #222222);
