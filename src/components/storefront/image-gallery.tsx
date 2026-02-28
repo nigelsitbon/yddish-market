@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
+import { createPortal } from "react-dom";
 import Image from "next/image";
 import { ChevronLeft, ChevronRight, X, Maximize2 } from "@/components/ui/icons";
 
@@ -190,8 +191,8 @@ export function ImageGallery({ images, title }: ImageGalleryProps) {
         )}
       </div>
 
-      {/* ── Lightbox ── */}
-      {lightboxOpen && (
+      {/* ── Lightbox (portaled to body to escape stacking contexts) ── */}
+      {lightboxOpen && createPortal(
         <div className="fixed inset-0 z-[60] flex items-center justify-center" role="dialog" aria-modal="true">
           {/* Backdrop */}
           <div
@@ -253,7 +254,8 @@ export function ImageGallery({ images, title }: ImageGalleryProps) {
               {current + 1} / {images.length}
             </div>
           )}
-        </div>
+        </div>,
+        document.body,
       )}
     </>
   );
