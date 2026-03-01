@@ -9,6 +9,7 @@ import { formatPrice } from "@/lib/utils";
 import { Star, Package, Truck, Check, Shield } from "@/components/ui/icons";
 import { unstable_cache } from "next/cache";
 import { ProductJsonLd, BreadcrumbJsonLd } from "@/components/seo/json-ld";
+import { ShareButton } from "@/components/storefront/share-button";
 
 // ISR: revalidate every 300s — product data cached on CDN
 export const revalidate = 300;
@@ -211,16 +212,19 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
 
           {/* ═══ LEFT: Product Info ═══ */}
           <div className="order-2 lg:order-1 lg:py-4">
-            {/* Seller name */}
-            <Link
-              href={`/seller/${product.seller.slug}`}
-              className="inline-flex items-center gap-1.5 text-[11px] tracking-[0.12em] uppercase text-muted-foreground hover:text-accent transition-colors"
-            >
-              {product.seller.shopName}
-              {product.seller.verified && (
-                <Check size={10} strokeWidth={2.5} className="text-accent" />
-              )}
-            </Link>
+            {/* Seller name + Share */}
+            <div className="flex items-center justify-between">
+              <Link
+                href={`/seller/${product.seller.slug}`}
+                className="inline-flex items-center gap-1.5 text-[11px] tracking-[0.12em] uppercase text-muted-foreground hover:text-accent transition-colors"
+              >
+                {product.seller.shopName}
+                {product.seller.verified && (
+                  <Check size={10} strokeWidth={2.5} className="text-accent" />
+                )}
+              </Link>
+              <ShareButton title={product.title} url={`https://yddishmarket.com/products/${product.slug}`} />
+            </div>
 
             {/* Title */}
             <h1 className="text-[26px] lg:text-[32px] font-light text-foreground mt-3 leading-[1.2] tracking-[-0.01em]">

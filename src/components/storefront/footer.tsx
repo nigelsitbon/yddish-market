@@ -1,4 +1,8 @@
+"use client";
+
 import Link from "next/link";
+import { useState } from "react";
+import { Instagram, Facebook, Mail } from "@/components/ui/icons";
 
 const footerSections = [
   {
@@ -38,12 +42,76 @@ const footerSections = [
   },
 ];
 
+function NewsletterForm() {
+  const [email, setEmail] = useState("");
+  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [msg, setMsg] = useState("");
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email.trim()) return;
+    setStatus("loading");
+    try {
+      const res = await fetch("/api/newsletter", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: email.trim() }),
+      });
+      const json = await res.json();
+      if (json.success) {
+        setStatus("success");
+        setMsg("Merci ! Vous recevrez nos actualites.");
+        setEmail("");
+        setTimeout(() => setStatus("idle"), 4000);
+      } else {
+        setStatus("error");
+        setMsg(json.error || "Erreur");
+        setTimeout(() => setStatus("idle"), 3000);
+      }
+    } catch {
+      setStatus("error");
+      setMsg("Erreur reseau");
+      setTimeout(() => setStatus("idle"), 3000);
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="flex gap-2">
+      <div className="relative flex-1">
+        <Mail size={14} strokeWidth={1.5} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground/60" />
+        <input
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="Votre email"
+          aria-label="Email pour la newsletter"
+          className="w-full h-10 pl-9 pr-3 text-[12px] bg-white border border-border/60 rounded-lg focus:outline-none focus:ring-1 focus:ring-accent/30 placeholder:text-muted-foreground/50 transition-all"
+          required
+        />
+      </div>
+      <button
+        type="submit"
+        disabled={status === "loading"}
+        className="h-10 px-5 text-[11px] tracking-[0.1em] uppercase font-medium bg-foreground text-white rounded-lg hover:bg-foreground/90 disabled:opacity-50 transition-all shrink-0"
+      >
+        {status === "loading" ? "..." : "OK"}
+      </button>
+      {status === "success" && (
+        <p className="absolute mt-11 text-[11px] text-accent">{msg}</p>
+      )}
+      {status === "error" && (
+        <p className="absolute mt-11 text-[11px] text-sale">{msg}</p>
+      )}
+    </form>
+  );
+}
+
 export function Footer() {
   return (
     <footer className="border-t border-border bg-[#FAFAF9]">
-      {/* Links */}
+      {/* Links + Newsletter */}
       <div className="mx-auto max-w-[1440px] px-4 sm:px-8 lg:px-12 py-12 lg:py-16">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 lg:gap-16">
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8 lg:gap-12">
           {footerSections.map((section) => (
             <div key={section.title}>
               <h3 className="text-[11px] font-medium tracking-[0.15em] uppercase text-foreground mb-5">
@@ -63,6 +131,41 @@ export function Footer() {
               </ul>
             </div>
           ))}
+
+          {/* Newsletter + Social */}
+          <div className="col-span-2 md:col-span-4 lg:col-span-1">
+            <h3 className="text-[11px] font-medium tracking-[0.15em] uppercase text-foreground mb-5">
+              Newsletter
+            </h3>
+            <p className="text-[12px] text-muted-foreground mb-3 leading-relaxed">
+              Nouveautes et offres exclusives
+            </p>
+            <div className="relative">
+              <NewsletterForm />
+            </div>
+
+            {/* Social links */}
+            <div className="flex items-center gap-3 mt-6">
+              <a
+                href="https://instagram.com/yddishmarket"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-9 h-9 flex items-center justify-center border border-border/60 rounded-lg text-muted-foreground hover:text-foreground hover:border-foreground/30 transition-all"
+                aria-label="Instagram"
+              >
+                <Instagram size={16} strokeWidth={1.5} />
+              </a>
+              <a
+                href="https://facebook.com/yddishmarket"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-9 h-9 flex items-center justify-center border border-border/60 rounded-lg text-muted-foreground hover:text-foreground hover:border-foreground/30 transition-all"
+                aria-label="Facebook"
+              >
+                <Facebook size={16} strokeWidth={1.5} />
+              </a>
+            </div>
+          </div>
         </div>
       </div>
 
