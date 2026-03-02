@@ -143,7 +143,7 @@ export async function POST(req: Request) {
     });
 
     // Bust cache
-    revalidateTag("homepage");
+    revalidateTag("homepage", { expire: 0 });
 
     return NextResponse.json({ success: true, data: { url, key } });
   } catch (error) {
@@ -194,7 +194,7 @@ export async function PUT(req: Request) {
     );
 
     // Bust cache
-    revalidateTag("homepage");
+    revalidateTag("homepage", { expire: 0 });
 
     return NextResponse.json({ success: true });
   } catch (error) {
