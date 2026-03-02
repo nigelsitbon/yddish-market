@@ -19,12 +19,12 @@ import { useCartStore } from "@/stores/cart";
 import { SearchAutocomplete } from "./search-autocomplete";
 
 const navigation = [
-  { name: "Nouveautés", href: "/?sort=newest" },
-  { name: "Vêtements", href: "/?category=vetements" },
-  { name: "Bijoux", href: "/?category=bijoux" },
-  { name: "Art & Accessoires", href: "/?category=art-accessoires" },
-  { name: "Livres", href: "/?category=livres" },
-  { name: "Fêtes", href: "/?category=fetes" },
+  { name: "Nouveautés", href: "/products?sort=newest" },
+  { name: "Vêtements", href: "/products?category=vetements" },
+  { name: "Bijoux", href: "/products?category=bijoux" },
+  { name: "Art & Accessoires", href: "/products?category=art-accessoires" },
+  { name: "Livres", href: "/products?category=livres" },
+  { name: "Fêtes", href: "/products?category=fetes" },
 ];
 
 type UserContext = {
@@ -216,7 +216,7 @@ export function Header() {
               </Link>
             ))}
             <Link
-              href="/?category=epicerie-fine"
+              href="/products?category=epicerie-fine"
               className="text-[13px] tracking-wide text-sale hover:opacity-60 transition-opacity"
             >
               Épicerie Fine
@@ -240,7 +240,7 @@ export function Header() {
               </Link>
             ))}
             <Link
-              href="/?category=epicerie-fine"
+              href="/products?category=epicerie-fine"
               className="block py-2.5 text-[13px] tracking-wide text-sale"
               onClick={() => setMobileMenuOpen(false)}
             >

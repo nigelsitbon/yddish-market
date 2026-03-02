@@ -1,26 +1,26 @@
 import { NextResponse } from "next/server";
+import { revalidateTag } from "next/cache";
 import { getCurrentUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { supabaseAdmin } from "@/lib/supabase";
 import sharp from "sharp";
 
-/* ── Dimensions cibles par clé ── */
+/* ── Dimensions cibles par clé image ── */
 const DIMENSIONS: Record<string, { width: number; height: number; label: string }> = {
-  hero_image:            { width: 1200, height: 1500, label: "Hero (portrait 4:5)" },
-  bijoux_image:          { width: 800,  height: 600,  label: "Bijoux (paysage 4:3)" },
-  art_accessoires_image: { width: 800,  height: 600,  label: "Art & Accessoires (paysage 4:3)" },
-  fetes_image:           { width: 800,  height: 600,  label: "Fêtes (paysage 4:3)" },
-  artisan_image:         { width: 1200, height: 800,  label: "Artisan (paysage 3:2)" },
-  vetements_image:       { width: 600,  height: 600,  label: "Vêtements (carré 1:1)" },
-  livres_image:          { width: 600,  height: 600,  label: "Livres (carré 1:1)" },
-  epicerie_fine_image:   { width: 600,  height: 600,  label: "Épicerie Fine (carré 1:1)" },
+  hero_image:       { width: 1200, height: 1500, label: "Hero (portrait 4:5)" },
+  heritage_image_1: { width: 600,  height: 750,  label: "Héritage 1 (portrait 4:5)" },
+  heritage_image_2: { width: 600,  height: 750,  label: "Héritage 2 (portrait 4:5)" },
+  heritage_image_3: { width: 600,  height: 750,  label: "Héritage 3 (portrait 4:5)" },
+  heritage_image_4: { width: 600,  height: 750,  label: "Héritage 4 (portrait 4:5)" },
+  heritage_image_5: { width: 600,  height: 750,  label: "Héritage 5 (portrait 4:5)" },
+  heritage_image_6: { width: 600,  height: 750,  label: "Héritage 6 (portrait 4:5)" },
 };
 
-const VALID_KEYS = Object.keys(DIMENSIONS);
+const VALID_IMAGE_KEYS = Object.keys(DIMENSIONS);
 const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp", "image/avif"];
 const MAX_SIZE = 10 * 1024 * 1024; // 10MB
 
-/* ── GET: Récupérer toutes les images homepage ── */
+/* ── GET: Récupérer images + textes homepage ── */
 
 export async function GET() {
   try {
@@ -30,18 +30,30 @@ export async function GET() {
     }
 
     const settings = await prisma.siteSetting.findMany({
-      where: { key: { in: VALID_KEYS } },
+      where: {
+        OR: [
+          { key: { in: VALID_IMAGE_KEYS } },
+          { key: { startsWith: "homepage_text_" } },
+        ],
+      },
     });
 
     const images: Record<string, string | null> = {};
-    for (const key of VALID_KEYS) {
+    for (const key of VALID_IMAGE_KEYS) {
       const setting = settings.find((s) => s.key === key);
       images[key] = setting?.value ?? null;
     }
 
+    const texts: Record<string, string> = {};
+    for (const s of settings) {
+      if (s.key.startsWith("homepage_text_")) {
+        texts[s.key] = s.value;
+      }
+    }
+
     return NextResponse.json({
       success: true,
-      data: { images, dimensions: DIMENSIONS },
+      data: { images, texts, dimensions: DIMENSIONS },
     });
   } catch (error) {
     console.error("[ADMIN_HOMEPAGE_GET]", error);
@@ -49,7 +61,7 @@ export async function GET() {
   }
 }
 
-/* ── POST: Upload + resize + save ── */
+/* ── POST: Upload + resize + save image ── */
 
 export async function POST(req: Request) {
   try {
@@ -66,7 +78,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ success: false, error: "file et key requis" }, { status: 400 });
     }
 
-    if (!VALID_KEYS.includes(key)) {
+    if (!VALID_IMAGE_KEYS.includes(key)) {
       return NextResponse.json({ success: false, error: `Clé invalide: ${key}` }, { status: 400 });
     }
 
@@ -78,11 +90,11 @@ export async function POST(req: Request) {
       return NextResponse.json({ success: false, error: "Fichier trop lourd (max 10 Mo)" }, { status: 400 });
     }
 
-    // Lire le fichier
+    // Read file
     const arrayBuffer = await file.arrayBuffer();
     const inputBuffer = Buffer.from(arrayBuffer);
 
-    // Resize + crop centré + conversion WebP
+    // Resize + crop + WebP
     let processedBuffer: Buffer;
     try {
       const { width, height } = DIMENSIONS[key];
@@ -98,7 +110,7 @@ export async function POST(req: Request) {
       }, { status: 500 });
     }
 
-    // Upload vers Supabase Storage
+    // Upload to Supabase
     const storagePath = `homepage/${key}.webp`;
 
     const { error: uploadError } = await supabaseAdmin.storage
@@ -116,23 +128,77 @@ export async function POST(req: Request) {
       }, { status: 500 });
     }
 
-    // Récupérer l'URL publique
+    // Get public URL
     const { data: publicUrlData } = supabaseAdmin.storage
       .from("products")
       .getPublicUrl(storagePath);
 
     const url = `${publicUrlData.publicUrl}?v=${Date.now()}`;
 
-    // Sauvegarder en DB
+    // Save to DB
     await prisma.siteSetting.upsert({
       where: { key },
       update: { value: url },
       create: { key, value: url },
     });
 
+    // Bust cache
+    revalidateTag("homepage");
+
     return NextResponse.json({ success: true, data: { url, key } });
   } catch (error) {
     console.error("[ADMIN_HOMEPAGE_POST]", error);
+    return NextResponse.json({
+      success: false,
+      error: `Erreur serveur: ${error instanceof Error ? error.message : "Unknown"}`,
+    }, { status: 500 });
+  }
+}
+
+/* ── PUT: Save text content ── */
+
+export async function PUT(req: Request) {
+  try {
+    const user = await getCurrentUser();
+    if (!user || user.role !== "ADMIN") {
+      return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 403 });
+    }
+
+    const body = await req.json();
+    const { texts } = body as { texts?: Record<string, string> };
+
+    if (!texts || typeof texts !== "object") {
+      return NextResponse.json({ success: false, error: "texts requis" }, { status: 400 });
+    }
+
+    // Validate all keys start with homepage_text_
+    const entries = Object.entries(texts);
+    for (const [key] of entries) {
+      if (!key.startsWith("homepage_text_")) {
+        return NextResponse.json({
+          success: false,
+          error: `Clé invalide: ${key}. Seules les clés homepage_text_* sont autorisées.`,
+        }, { status: 400 });
+      }
+    }
+
+    // Upsert all values in transaction
+    await prisma.$transaction(
+      entries.map(([key, value]) =>
+        prisma.siteSetting.upsert({
+          where: { key },
+          update: { value },
+          create: { key, value },
+        })
+      )
+    );
+
+    // Bust cache
+    revalidateTag("homepage");
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error("[ADMIN_HOMEPAGE_PUT]", error);
     return NextResponse.json({
       success: false,
       error: `Erreur serveur: ${error instanceof Error ? error.message : "Unknown"}`,

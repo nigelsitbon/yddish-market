@@ -16,9 +16,9 @@ type CatalogFiltersProps = {
 };
 
 const sortOptions = [
-  { value: "newest", label: "Nouveautes" },
+  { value: "newest", label: "Nouveautés" },
   { value: "price-asc", label: "Prix croissant" },
-  { value: "price-desc", label: "Prix decroissant" },
+  { value: "price-desc", label: "Prix décroissant" },
   { value: "trending", label: "Tendances" },
 ];
 

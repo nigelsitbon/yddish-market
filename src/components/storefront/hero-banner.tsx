@@ -1,40 +1,60 @@
 import Image from "next/image";
 import Link from "next/link";
+import { Fragment } from "react";
+import type { HomepageSettings } from "@/lib/homepage-settings";
 
-export function HeroBanner() {
+type HeroBannerProps = {
+  settings: HomepageSettings;
+};
+
+export function HeroBanner({ settings }: HeroBannerProps) {
+  const t = settings.texts;
+  const heroImage = settings.heroImage;
+  const titleLines = (t.homepage_text_hero_title ?? "").split("\n");
+  const isRemoteImage = heroImage.startsWith("http");
+
   return (
-    <div className="mx-auto max-w-[1440px] px-4 sm:px-8 lg:px-12 pt-4">
-      <section className="relative w-full h-[270px] sm:h-[340px] lg:h-[400px] overflow-hidden rounded-2xl">
-        {/* Full-width artisan image */}
-        <Image
-          src="/images/hero-artisan.jpg"
-          alt="Artisan dans son atelier"
-          fill
-          priority
-          sizes="100vw"
-          className="object-cover object-center"
-        />
-
-        {/* Subtle dark overlay */}
-        <div className="absolute inset-0 bg-black/50 rounded-2xl" />
-
-        {/* Centered tagline */}
-        <div className="absolute inset-0 flex flex-col items-center justify-center px-6">
-          <p className="text-white/60 text-[10px] sm:text-[11px] tracking-[0.4em] uppercase mb-3">
+    <section className="mx-auto max-w-[1440px] px-4 sm:px-8 lg:px-12">
+      <div className="grid lg:grid-cols-2 min-h-[calc(100dvh-140px)] lg:min-h-[calc(100dvh-140px)] max-h-[900px]">
+        {/* Left — text block */}
+        <div className="flex flex-col justify-center py-16 sm:py-20 lg:py-0 lg:pr-16 xl:pr-24 order-2 lg:order-1">
+          <p className="text-[11px] tracking-[0.3em] uppercase text-muted-foreground mb-6">
             Yddish Market
           </p>
-          <h2 className="text-white text-center font-extralight text-[20px] sm:text-[26px] lg:text-[32px] tracking-[0.15em] sm:tracking-[0.2em] leading-relaxed">
-            L&apos;artisanat judaïque d&apos;exception
-          </h2>
-          <div className="mt-5 w-8 h-px bg-white/30" />
-          <Link
-            href="/products"
-            className="mt-5 text-white/50 text-[11px] tracking-[0.3em] uppercase hover:text-white/80 transition-colors duration-300"
-          >
-            Découvrir
-          </Link>
+          <h1 className="text-[28px] sm:text-[36px] lg:text-[44px] xl:text-[50px] font-extralight text-foreground leading-[1.2] tracking-[0.02em]">
+            {titleLines.map((line, i) => (
+              <Fragment key={i}>
+                {i > 0 && <br />}
+                {line}
+              </Fragment>
+            ))}
+          </h1>
+          <p className="mt-6 text-[14px] sm:text-[15px] text-muted-foreground leading-[1.8] max-w-[440px]">
+            {t.homepage_text_hero_subtitle}
+          </p>
+          <div className="mt-10">
+            <Link
+              href="/products"
+              className="inline-flex items-center h-12 px-8 text-[12px] tracking-[0.2em] uppercase font-medium border border-foreground text-foreground hover:bg-foreground hover:text-white transition-all duration-300 rounded-xl"
+            >
+              {t.homepage_text_hero_cta}
+            </Link>
+          </div>
         </div>
-      </section>
-    </div>
+
+        {/* Right — B&W photo */}
+        <div className="relative order-1 lg:order-2 min-h-[360px] sm:min-h-[460px] lg:min-h-full">
+          <Image
+            src={heroImage}
+            alt="Artisan dans son atelier"
+            fill
+            priority
+            sizes="(max-width: 1024px) 100vw, 50vw"
+            className="object-cover object-center grayscale"
+            {...(isRemoteImage ? { unoptimized: false } : {})}
+          />
+        </div>
+      </div>
+    </section>
   );
 }

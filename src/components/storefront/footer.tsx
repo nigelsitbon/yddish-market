@@ -8,20 +8,21 @@ const footerSections = [
   {
     title: "YDDISH MARKET",
     links: [
-      { name: "A propos", href: "/about" },
+      { name: "À propos", href: "/about" },
       { name: "Nos artisans", href: "/sellers" },
       { name: "Devenir vendeur", href: "/become-seller" },
-      { name: "Comment ca marche", href: "/how-it-works" },
+      { name: "Comment ça marche", href: "/how-it-works" },
     ],
   },
   {
-    title: "Categories",
+    title: "Catégories",
     links: [
-      { name: "Objets rituels", href: "/?category=objets-rituels" },
-      { name: "Bijoux", href: "/?category=bijoux" },
-      { name: "Mezouzot", href: "/?category=mezouzot" },
-      { name: "Art & Decoration", href: "/?category=art-decoration" },
-      { name: "Mode", href: "/?category=mode" },
+      { name: "Vêtements", href: "/products?category=vetements" },
+      { name: "Bijoux", href: "/products?category=bijoux" },
+      { name: "Art & Accessoires", href: "/products?category=art-accessoires" },
+      { name: "Livres", href: "/products?category=livres" },
+      { name: "Fêtes", href: "/products?category=fetes" },
+      { name: "Épicerie Fine", href: "/products?category=epicerie-fine" },
     ],
   },
   {
@@ -33,11 +34,11 @@ const footerSections = [
     ],
   },
   {
-    title: "Legal",
+    title: "Légal",
     links: [
-      { name: "Mentions legales", href: "/legal" },
+      { name: "Mentions légales", href: "/legal" },
       { name: "CGV", href: "/cgv" },
-      { name: "Confidentialite", href: "/privacy" },
+      { name: "Confidentialité", href: "/privacy" },
     ],
   },
 ];
@@ -60,7 +61,7 @@ function NewsletterForm() {
       const json = await res.json();
       if (json.success) {
         setStatus("success");
-        setMsg("Merci ! Vous recevrez nos actualites.");
+        setMsg("Merci ! Vous recevrez nos actualités.");
         setEmail("");
         setTimeout(() => setStatus("idle"), 4000);
       } else {
@@ -70,7 +71,7 @@ function NewsletterForm() {
       }
     } catch {
       setStatus("error");
-      setMsg("Erreur reseau");
+      setMsg("Erreur réseau");
       setTimeout(() => setStatus("idle"), 3000);
     }
   };
@@ -138,7 +139,7 @@ export function Footer() {
               Newsletter
             </h3>
             <p className="text-[12px] text-muted-foreground mb-3 leading-relaxed">
-              Nouveautes et offres exclusives
+              Nouveautés et offres exclusives
             </p>
             <div className="relative">
               <NewsletterForm />
@@ -174,11 +175,11 @@ export function Footer() {
         <div className="mx-auto max-w-[1440px] px-4 sm:px-8 lg:px-12 py-6">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <p className="text-[12px] text-muted-foreground">
-              &copy; {new Date().getFullYear()} EINSOF SAS &mdash; Tous droits reserves
+              &copy; {new Date().getFullYear()} EINSOF SAS &mdash; Tous droits réservés
             </p>
             <div className="flex items-center gap-6">
-              <span className="text-[11px] text-muted-foreground tracking-wide border border-border/50 rounded-full px-3 py-1">Paiement securise</span>
-              <span className="text-[11px] text-muted-foreground tracking-wide border border-border/50 rounded-full px-3 py-1">Artisans verifies</span>
+              <span className="text-[11px] text-muted-foreground tracking-wide border border-border/50 rounded-full px-3 py-1">Paiement sécurisé</span>
+              <span className="text-[11px] text-muted-foreground tracking-wide border border-border/50 rounded-full px-3 py-1">Artisans vérifiés</span>
             </div>
           </div>
         </div>

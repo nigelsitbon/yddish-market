@@ -19,6 +19,7 @@ export {
   Loader2,
   Lock,
   Mail,
+  MapPin,
   Maximize2,
   Menu,
   Minus,

@@ -127,9 +127,20 @@ export default async function SellerPage({
         )}
       </div>
 
+      {/* Breadcrumb */}
+      <div className="mx-auto max-w-[1440px] px-4 sm:px-8 lg:px-12 pt-4 pb-2">
+        <nav className="flex items-center gap-2 text-[12px] text-muted-foreground">
+          <Link href="/" className="hover:text-foreground transition-colors">Accueil</Link>
+          <span className="text-border">/</span>
+          <Link href="/sellers" className="hover:text-foreground transition-colors">Artisans</Link>
+          <span className="text-border">/</span>
+          <span className="text-foreground/60">{seller.shopName}</span>
+        </nav>
+      </div>
+
       {/* Seller info */}
       <div className="mx-auto max-w-[1440px] px-4 sm:px-8 lg:px-12">
-        <div className="relative -mt-12 mb-8">
+        <div className="relative -mt-6 mb-8">
           <div className="flex items-end gap-6">
             {/* Avatar */}
             <div className="w-24 h-24 bg-white border border-border shadow-sm rounded-2xl overflow-hidden relative">
@@ -185,15 +196,6 @@ export default async function SellerPage({
             </p>
           </div>
         )}
-
-        {/* Breadcrumb */}
-        <nav className="flex items-center gap-2 text-[12px] text-muted-foreground mb-4">
-          <Link href="/" className="hover:text-foreground transition-colors">
-            Accueil
-          </Link>
-          <span>&gt;</span>
-          <span className="text-foreground">{seller.shopName}</span>
-        </nav>
 
         {/* Products count */}
         <div className="flex items-center justify-between py-4 border-b border-border mb-8">

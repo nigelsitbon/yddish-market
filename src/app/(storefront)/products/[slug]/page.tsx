@@ -360,7 +360,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
       {/* ═══ Full description (below fold) ═══ */}
       {product.description.length > 200 && (
         <section className="border-t border-border/40">
-          <div className="mx-auto max-w-[1440px] px-4 sm:px-8 lg:px-12 py-12 lg:py-16">
+          <div className="mx-auto max-w-[1440px] px-4 sm:px-8 lg:px-12 py-10 lg:py-12">
             <div className="max-w-2xl">
               <h2 className="text-[11px] font-medium tracking-[0.15em] uppercase text-muted-foreground mb-5">
                 Description complète
@@ -373,9 +373,45 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
         </section>
       )}
 
+      {/* ═══ Engagements ═══ */}
+      <section className="border-t border-border/40 bg-[#FAFAF9]">
+        <div className="mx-auto max-w-[1440px] px-4 sm:px-8 lg:px-12 py-10 lg:py-12">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+            <div className="text-center">
+              <div className="w-10 h-10 mx-auto mb-3 flex items-center justify-center border border-border/60 rounded-xl">
+                <Shield size={18} strokeWidth={1.5} className="text-foreground/60" />
+              </div>
+              <p className="text-[12px] font-medium text-foreground mb-1">Paiement sécurisé</p>
+              <p className="text-[11px] text-muted-foreground leading-relaxed">Transactions protégées par Stripe</p>
+            </div>
+            <div className="text-center">
+              <div className="w-10 h-10 mx-auto mb-3 flex items-center justify-center border border-border/60 rounded-xl">
+                <Truck size={18} strokeWidth={1.5} className="text-foreground/60" />
+              </div>
+              <p className="text-[12px] font-medium text-foreground mb-1">Livraison suivie</p>
+              <p className="text-[11px] text-muted-foreground leading-relaxed">Suivi en temps réel de votre commande</p>
+            </div>
+            <div className="text-center">
+              <div className="w-10 h-10 mx-auto mb-3 flex items-center justify-center border border-border/60 rounded-xl">
+                <Package size={18} strokeWidth={1.5} className="text-foreground/60" />
+              </div>
+              <p className="text-[12px] font-medium text-foreground mb-1">Retour 14 jours</p>
+              <p className="text-[11px] text-muted-foreground leading-relaxed">Satisfait ou remboursé sous 14 jours</p>
+            </div>
+            <div className="text-center">
+              <div className="w-10 h-10 mx-auto mb-3 flex items-center justify-center border border-border/60 rounded-xl">
+                <Check size={18} strokeWidth={1.5} className="text-foreground/60" />
+              </div>
+              <p className="text-[12px] font-medium text-foreground mb-1">Artisans vérifiés</p>
+              <p className="text-[11px] text-muted-foreground leading-relaxed">Chaque vendeur est sélectionné avec soin</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ═══ Reviews ═══ */}
       <section className="border-t border-border/40">
-        <div className="mx-auto max-w-[1440px] px-4 sm:px-8 lg:px-12 py-12 lg:py-16">
+        <div className="mx-auto max-w-[1440px] px-4 sm:px-8 lg:px-12 py-10 lg:py-12">
           <h2 className="text-[11px] font-medium tracking-[0.15em] uppercase text-muted-foreground mb-8">
             Avis clients ({product._count.reviews})
           </h2>
@@ -459,8 +495,8 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
 
       {/* ═══ Related products ═══ */}
       {relatedProducts.length > 0 && (
-        <section className="border-t border-border/40 bg-[#FAFAF9]">
-          <div className="mx-auto max-w-[1440px] px-4 sm:px-8 lg:px-12 py-12 lg:py-16">
+        <section className="border-t border-border/40">
+          <div className="mx-auto max-w-[1440px] px-4 sm:px-8 lg:px-12 py-10 lg:py-12">
             <h2 className="text-[11px] font-medium tracking-[0.15em] uppercase text-muted-foreground mb-8">
               Vous aimerez aussi
             </h2>
