@@ -115,9 +115,9 @@ export function Footer() {
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8 lg:gap-12">
           {footerSections.map((section) => (
             <div key={section.title}>
-              <h3 className="text-[11px] font-medium tracking-[0.15em] uppercase text-foreground mb-5">
+              <p className="text-[11px] font-medium tracking-[0.15em] uppercase text-foreground mb-5">
                 {section.title}
-              </h3>
+              </p>
               <ul className="space-y-3">
                 {section.links.map((link) => (
                   <li key={link.name}>
@@ -135,9 +135,9 @@ export function Footer() {
 
           {/* Newsletter + Social */}
           <div className="col-span-2 md:col-span-4 lg:col-span-1">
-            <h3 className="text-[11px] font-medium tracking-[0.15em] uppercase text-foreground mb-5">
+            <p className="text-[11px] font-medium tracking-[0.15em] uppercase text-foreground mb-5">
               Newsletter
-            </h3>
+            </p>
             <p className="text-[12px] text-muted-foreground mb-3 leading-relaxed">
               Nouveautés et offres exclusives
             </p>

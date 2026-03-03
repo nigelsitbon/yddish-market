@@ -49,6 +49,7 @@ export function HeroBanner({ settings }: HeroBannerProps) {
             alt="Artisan dans son atelier"
             fill
             priority
+            fetchPriority="high"
             sizes="(max-width: 1024px) 100vw, 50vw"
             className="object-cover object-center grayscale"
             {...(isRemoteImage ? { unoptimized: false } : {})}
