@@ -3,6 +3,7 @@ import Link from "next/link";
 export const metadata = {
   title: "Livraison & Retours — YDDISH MARKET",
   description: "Informations sur la livraison, les délais et la politique de retours de YDDISH MARKET.",
+  alternates: { canonical: "/shipping" },
 };
 
 export default function ShippingPage() {

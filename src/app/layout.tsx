@@ -33,7 +33,7 @@ export const metadata: Metadata = {
     "hanoukkia",
   ],
   alternates: {
-    canonical: "https://yddishmarket.com",
+    canonical: "/",
   },
   openGraph: {
     type: "website",

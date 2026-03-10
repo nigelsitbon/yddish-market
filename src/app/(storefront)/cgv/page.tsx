@@ -3,6 +3,7 @@ import Link from "next/link";
 export const metadata = {
   title: "Conditions Générales de Vente — YDDISH MARKET",
   description: "Conditions générales de vente de la marketplace YDDISH MARKET opérée par EINSOF SAS.",
+  alternates: { canonical: "/cgv" },
 };
 
 export default function CGVPage() {

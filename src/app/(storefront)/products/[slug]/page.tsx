@@ -82,16 +82,16 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   if (!product) return { title: "Produit introuvable" };
 
   const description = product.description.slice(0, 160);
-  const url = `https://yddishmarket.com/products/${product.slug}`;
+  const canonicalPath = `/products/${product.slug}`;
 
   return {
     title: product.title,
     description,
-    alternates: { canonical: url },
+    alternates: { canonical: canonicalPath },
     openGraph: {
       title: product.title,
       description,
-      url,
+      url: canonicalPath,
       type: "website",
       images: product.images.length > 0
         ? [{ url: product.images[0], width: 800, height: 800, alt: product.title }]

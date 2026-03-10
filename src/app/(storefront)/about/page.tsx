@@ -6,6 +6,7 @@ export const metadata: Metadata = {
   title: "Notre manifeste — YDDISH MARKET",
   description:
     "Yddish Market est la première marketplace dédiée aux objets judaïques d'exception. Artisanat, authenticité, héritage.",
+  alternates: { canonical: "/about" },
 };
 
 export default function AboutPage() {

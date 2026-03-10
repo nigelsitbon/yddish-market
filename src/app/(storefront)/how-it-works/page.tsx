@@ -3,6 +3,7 @@ import Link from "next/link";
 export const metadata = {
   title: "Comment ça marche — YDDISH MARKET",
   description: "Découvrez comment acheter et vendre sur YDDISH MARKET, la marketplace de l'artisanat judaïque.",
+  alternates: { canonical: "/how-it-works" },
 };
 
 export default function HowItWorksPage() {

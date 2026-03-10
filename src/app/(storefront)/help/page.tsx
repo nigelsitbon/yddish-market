@@ -3,6 +3,7 @@ import Link from "next/link";
 export const metadata = {
   title: "Centre d'aide — YDDISH MARKET",
   description: "Trouvez les réponses à vos questions sur YDDISH MARKET. FAQ, contact et assistance.",
+  alternates: { canonical: "/help" },
 };
 
 const faqSections = [

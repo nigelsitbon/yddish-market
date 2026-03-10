@@ -3,6 +3,7 @@ import Link from "next/link";
 export const metadata = {
   title: "Politique de confidentialité — YDDISH MARKET",
   description: "Politique de confidentialité et protection des données personnelles de YDDISH MARKET.",
+  alternates: { canonical: "/privacy" },
 };
 
 export default function PrivacyPage() {

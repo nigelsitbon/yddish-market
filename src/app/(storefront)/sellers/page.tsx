@@ -6,6 +6,7 @@ import { Store, Star, Package } from "lucide-react";
 export const metadata = {
   title: "Nos artisans — YDDISH MARKET",
   description: "Découvrez les artisans vérifiés de YDDISH MARKET. Bijoutiers, calligraphes, orfèvres et créateurs au service de la culture judaïque.",
+  alternates: { canonical: "/sellers" },
 };
 
 export const dynamic = "force-dynamic";

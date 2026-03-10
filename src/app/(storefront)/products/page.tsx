@@ -13,6 +13,7 @@ export const metadata = {
   title: "Tous les produits",
   description:
     "Explorez notre collection d'objets Judaica : objets rituels, bijoux, mezouzot, art et décoration, mode, livres et alimentaire casher.",
+  alternates: { canonical: "/products" },
 };
 
 /* ── Cached data fetching ── */

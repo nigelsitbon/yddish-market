@@ -3,6 +3,7 @@ import Link from "next/link";
 export const metadata = {
   title: "Contact — YDDISH MARKET",
   description: "Contactez l'équipe YDDISH MARKET. Nous sommes là pour répondre à vos questions.",
+  alternates: { canonical: "/contact" },
 };
 
 export default function ContactPage() {

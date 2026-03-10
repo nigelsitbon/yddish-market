@@ -65,15 +65,15 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const seller = await getSellerBySlug(slug);
   if (!seller) return { title: "Vendeur introuvable" };
   const description = seller.description?.slice(0, 160) ?? `Découvrez la boutique ${seller.shopName} sur YDDISH MARKET.`;
-  const url = `https://yddishmarket.com/seller/${seller.slug}`;
+  const canonicalPath = `/seller/${seller.slug}`;
   return {
     title: seller.shopName,
     description,
-    alternates: { canonical: url },
+    alternates: { canonical: canonicalPath },
     openGraph: {
       title: `${seller.shopName} — YDDISH MARKET`,
       description,
-      url,
+      url: canonicalPath,
       type: "website",
     },
   };

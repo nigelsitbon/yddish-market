@@ -3,6 +3,7 @@ import Link from "next/link";
 export const metadata = {
   title: "Mentions légales — YDDISH MARKET",
   description: "Mentions légales de YDDISH MARKET, opéré par EINSOF SAS.",
+  alternates: { canonical: "/legal" },
 };
 
 export default function LegalPage() {
